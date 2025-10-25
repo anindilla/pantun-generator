@@ -15,7 +15,8 @@
   }
   
   body {
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 50%, #f3e8ff 100%);
+    background: #ff9e66;
+    background: linear-gradient(90deg, rgba(255, 158, 102, 1) 0%, rgba(252, 205, 162, 1) 54%, rgba(255, 243, 189, 1) 100%);
     min-height: 100vh;
     color: #000000;
     font-weight: 500;
