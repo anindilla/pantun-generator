@@ -204,20 +204,30 @@ STUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
         const lineCount = inputLines.length
         
         if (lineCount === 1) {
-          userPrompt = `Continue this first line into a complete 4-line pantun:
-"${input}"
+          userPrompt = `Complete this pantun by adding 3 more lines after the given first line:
 
-IMPORTANT: You MUST start with the exact line above. Do NOT change it. Add 3 more lines after it.`
+${input}
+[Add line 2 here]
+[Add line 3 here - must rhyme with line 1]
+[Add line 4 here - must rhyme with line 2]
+
+The first line is: "${input}"
+You must start with this exact line and add 3 more lines.`
         } else if (lineCount === 2) {
-          userPrompt = `Complete this sampiran into a full 4-line pantun:
-"${input}"
+          userPrompt = `Complete this sampiran by adding 2 more lines (isi):
 
-IMPORTANT: You MUST start with the exact 2 lines above. Do NOT change them. Add 2 more lines (lines 3-4).`
+${input}
+[Add line 3 here - must rhyme with line 1]
+[Add line 4 here - must rhyme with line 2]
+
+The first 2 lines are given above. You must use them exactly and add 2 more lines.`
         } else if (lineCount === 3) {
-          userPrompt = `Complete this pantun with the final line:
-"${input}"
+          userPrompt = `Complete this pantun by adding the final line:
 
-IMPORTANT: You MUST start with the exact 3 lines above. Do NOT change them. Add only line 4.`
+${input}
+[Add line 4 here - must rhyme with line 2]
+
+The first 3 lines are given above. You must use them exactly and add only line 4.`
         } else {
           userPrompt = `Fix this pantun to have correct structure:
 "${input}"
