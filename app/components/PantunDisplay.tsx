@@ -21,7 +21,7 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
 
   const handleCopy = async () => {
     try {
-      const textWithAttribution = `${pantun}\n\nMade with pantun-generator.vercel.app by dilleuh`
+      const textWithAttribution = `${pantun}\n\nMade with https://pantun-generator.vercel.app by dilleuh`
       await navigator.clipboard.writeText(textWithAttribution)
       setCopied(true)
       trackPantunCopied(mode || 'unknown')
