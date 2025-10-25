@@ -17,11 +17,12 @@ export async function POST(request: NextRequest) {
 
 # STRUCTURE
 - Always write exactly 4 lines.
-- Follow rhyme pattern **a-b-a-b**.
+- Follow rhyme pattern **a-b-a-b** with EXACT last 2 characters matching.
 - Each line should have 8–12 syllables max.
 - Two first lines = **sampiran** (intro or setup, usually about nature, daily life, or simple imagery).
 - Two last lines = **isi** (the real meaning, emotion, or message).
 - Sampiran and isi must sound naturally connected, not random.
+- CRITICAL: Last 2 characters of line 1 must EXACTLY match line 3, line 2 must EXACTLY match line 4.
 
 # STYLE
 - Use natural, poetic, and fluent Indonesian.
@@ -38,11 +39,11 @@ export async function POST(request: NextRequest) {
 - DO NOT explain or comment—output pantun only.
 - DO NOT repeat same rhyme endings for all lines.
 - DO NOT force words just to make it rhyme. If it sounds unnatural, change it.
-- Example of GOOD pantun:
-  Jalan-jalan ke kota Blitar,  
-  Beli onde di pinggir kali.  
-  Kalau hati sedang bergetar,  
-  Tandanya rindu mulai bersemi.  
+- Example of GOOD pantun with EXACT rhyme:
+  Jalan-jalan ke kota Blitar,  (ends with "ar")
+  Beli onde di pinggir kali.   (ends with "li")
+  Kalau hati sedang bergetar,  (ends with "ar" - EXACT match with line 1)
+  Tandanya rindu mulai bersemi. (ends with "mi" - EXACT match with line 2)
 
 Remember:
 ✅ Simple, rhythmic, emotionally natural.  
@@ -166,79 +167,32 @@ Output pantun only. No extra text.`
       return true
     }
 
-    // Function to validate rhyme pattern (a-b-a-b) with proper Indonesian phonetic matching
+    // Function to validate rhyme pattern (a-b-a-b) with EXACT last 2 characters
     const validateRhyme = (pantun: string): boolean => {
       const lines = pantun.split('\n').filter((line: string) => line.trim())
       if (lines.length !== 4) return false
       
-      const getLastSyllables = (line: string): string => {
+      const getLastTwoChars = (line: string): string => {
         const cleaned = line.trim().replace(/[.,!?;:]$/, '')
         const words = cleaned.split(' ')
         const lastWord = words[words.length - 1].toLowerCase()
         
-        // Handle common Indonesian rhyme patterns based on your examples
-        // 2-syllable endings
-        if (lastWord.endsWith('atan')) return 'atan'  // tertahankan
-        if (lastWord.endsWith('akan')) return 'akan'  // tertahankan
-        if (lastWord.endsWith('aman')) return 'aman'  // tertahankan
-        if (lastWord.endsWith('asan')) return 'asan'  // tertahankan
-        if (lastWord.endsWith('atan')) return 'atan'  // tertahankan
-        if (lastWord.endsWith('atan')) return 'atan'  // tertahankan
-        
-        // Single syllable endings
-        if (lastWord.endsWith('at')) return 'at'      // barat, semangat
-        if (lastWord.endsWith('du')) return 'du'      // syahdu
-        if (lastWord.endsWith('an')) return 'an'     // ikan, senang, empang, Rahmat, semangat, warung, Sukiran, semak, dibersihkan, wayang, biskuit, disayang, peluit, Bali, semuanya, tuli, melihatnya
-        if (lastWord.endsWith('in')) return 'in'      // bensin, bersin
-        if (lastWord.endsWith('ung')) return 'ung'    // warung, Sukiran
-        if (lastWord.endsWith('ak')) return 'ak'     // semak, dibersihkan, wayang, biskuit
-        if (lastWord.endsWith('it')) return 'it'     // disayang, peluit
-        if (lastWord.endsWith('i')) return 'i'       // Bali, semuanya, tuli, melihatnya
-        if (lastWord.endsWith('a')) return 'a'       // Cua, semua, bensin, semangat
-        if (lastWord.endsWith('ar')) return 'ar'     // barat, semangat
-        if (lastWord.endsWith('er')) return 'er'     // semangat
-        if (lastWord.endsWith('ir')) return 'ir'     // semangat
-        if (lastWord.endsWith('or')) return 'or'     // semangat
-        if (lastWord.endsWith('ur')) return 'ur'     // semangat
-        if (lastWord.endsWith('as')) return 'as'     // semangat
-        if (lastWord.endsWith('es')) return 'es'     // semangat
-        if (lastWord.endsWith('is')) return 'is'     // semangat
-        if (lastWord.endsWith('os')) return 'os'     // semangat
-        if (lastWord.endsWith('us')) return 'us'     // semangat
-        if (lastWord.endsWith('ah')) return 'ah'     // semangat
-        if (lastWord.endsWith('eh')) return 'eh'     // semangat
-        if (lastWord.endsWith('ih')) return 'ih'     // semangat
-        if (lastWord.endsWith('oh')) return 'oh'     // semangat
-        if (lastWord.endsWith('uh')) return 'uh'     // semangat
-        if (lastWord.endsWith('en')) return 'en'     // semangat
-        if (lastWord.endsWith('on')) return 'on'     // semangat
-        if (lastWord.endsWith('un')) return 'un'     // semangat
-        if (lastWord.endsWith('ang')) return 'ang'   // semangat
-        if (lastWord.endsWith('eng')) return 'eng'   // semangat
-        if (lastWord.endsWith('ing')) return 'ing'   // semangat
-        if (lastWord.endsWith('ong')) return 'ong'   // semangat
-        if (lastWord.endsWith('ung')) return 'ung'   // semangat
-        
-        // For compound words, check the last meaningful syllable
-        if (lastWord.includes('tahan')) return 'an'   // tahan banting
-        if (lastWord.includes('banting')) return 'ing' // tahan banting
-        
-        // Fallback: get last 2-3 characters
-        return lastWord.slice(-3)
+        // Get exactly the last 2 characters
+        return lastWord.slice(-2)
       }
       
-      const rhyme1 = getLastSyllables(lines[0])
-      const rhyme2 = getLastSyllables(lines[1])
-      const rhyme3 = getLastSyllables(lines[2])
-      const rhyme4 = getLastSyllables(lines[3])
+      const rhyme1 = getLastTwoChars(lines[0])
+      const rhyme2 = getLastTwoChars(lines[1])
+      const rhyme3 = getLastTwoChars(lines[2])
+      const rhyme4 = getLastTwoChars(lines[3])
       
       // Log for debugging
       console.log(`Rhyme validation: Line 1 (${rhyme1}) vs Line 3 (${rhyme3})`)
       console.log(`Rhyme validation: Line 2 (${rhyme2}) vs Line 4 (${rhyme4})`)
       
-      // Check for exact phonetic match
-      const isRhyme1 = rhyme1 === rhyme3 && rhyme1.length > 0
-      const isRhyme2 = rhyme2 === rhyme4 && rhyme2.length > 0
+      // Check for EXACT character match (last 2 characters must be identical)
+      const isRhyme1 = rhyme1 === rhyme3 && rhyme1.length === 2
+      const isRhyme2 = rhyme2 === rhyme4 && rhyme2.length === 2
       const isDifferent = rhyme1 !== rhyme2
       
       console.log(`Rhyme validation result: ${isRhyme1 && isRhyme2 && isDifferent}`)
