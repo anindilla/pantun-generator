@@ -68,6 +68,14 @@ export async function POST(request: NextRequest) {
 - Examples: "ang" rhymes with "ang", "at" rhymes with "at", "ah" rhymes with "ah"
 - WRONG: "it" does NOT rhyme with "at" or "ah" or "an"
 - The rhyme pattern is MANDATORY - no exceptions!
+
+# CONTINUATION MODE INSTRUCTIONS:
+When the user provides existing lines to continue, you MUST:
+- Use the provided lines EXACTLY as given
+- Continue from those lines, do NOT create a completely new pantun
+- Maintain the existing rhyme pattern from the provided lines
+- Add only the missing lines to complete the pantun
+
 - Example of GOOD pantun with EXACT rhyme:
   Jalan-jalan ke kota Blitar,  (ends with "ar")
   Beli onde di pinggir kali.   (ends with "li")
@@ -172,56 +180,25 @@ STUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
         const lineCount = inputLines.length
         
         if (lineCount === 1) {
-          userPrompt = `CRITICAL: You MUST continue from the given first line. Do NOT create a completely new pantun.
-
-Complete this first line into a full 4-line pantun:
+          userPrompt = `Continue this first line into a complete 4-line pantun:
 "${input}"
 
-REQUIREMENTS:
-- MUST use the given first line exactly as provided
-- Add 3 more lines to complete the pantun
-- Maintain a-b-a-b rhyme pattern
-- Lines 1-2 = sampiran (imagery), lines 3-4 = isi (meaning)
-- Use natural, flowing Indonesian language
-- Make it meaningful and connected to the input line`
+Add 3 more lines. Line 1 is given, add lines 2, 3, and 4.`
         } else if (lineCount === 2) {
-          userPrompt = `CRITICAL: You MUST continue from the given sampiran. Do NOT create a completely new pantun.
-
-Complete this sampiran into a full 4-line pantun:
+          userPrompt = `Complete this sampiran into a full 4-line pantun:
 "${input}"
 
-REQUIREMENTS:
-- MUST use the given 2 lines exactly as provided
-- Add 2 more lines (isi) to complete the pantun
-- Maintain a-b-a-b rhyme pattern
-- Lines 1-2 = sampiran (given), lines 3-4 = isi (new)
-- Use natural, flowing Indonesian language
-- Make it meaningful and connected to the given sampiran`
+Lines 1-2 are given, add lines 3-4 (isi).`
         } else if (lineCount === 3) {
-          userPrompt = `CRITICAL: You MUST continue from the given 3 lines. Do NOT create a completely new pantun.
-
-Complete this pantun with the final line:
+          userPrompt = `Complete this pantun with the final line:
 "${input}"
 
-REQUIREMENTS:
-- MUST use the given 3 lines exactly as provided
-- Add only 1 final line to complete the pantun
-- Maintain a-b-a-b rhyme pattern
-- The final line must rhyme with line 2
-- Use natural, flowing Indonesian language
-- Make it meaningful and connected to the given lines`
+Lines 1-3 are given, add only line 4.`
         } else {
-          userPrompt = `CRITICAL: You MUST fix the given pantun. Do NOT create a completely new pantun.
-
-Fix this pantun to have correct structure:
+          userPrompt = `Fix this pantun to have correct structure:
 "${input}"
 
-REQUIREMENTS:
-- MUST use the given lines as the foundation
-- Fix the structure to be 4 lines with a-b-a-b rhyme
-- Lines 1-2 = sampiran, lines 3-4 = isi
-- Use natural, flowing Indonesian language
-- Make it meaningful and connected to the given content`
+Ensure 4 lines with a-b-a-b rhyme pattern.`
         }
         break
       
