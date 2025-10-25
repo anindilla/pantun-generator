@@ -200,11 +200,8 @@ STUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
         break
       
       case 'continue':
-        const inputLines = input.trim().split('\n').filter((line: string) => line.trim())
-        const lineCount = inputLines.length
-        
-        if (lineCount === 1) {
-          userPrompt = `Complete this pantun by adding 3 more lines after the given first line:
+        // Only support 1-line input for continue mode
+        userPrompt = `Complete this pantun by adding 3 more lines after the given first line:
 
 ${input}
 [Add line 2 here]
@@ -213,27 +210,6 @@ ${input}
 
 The first line is: "${input}"
 You must start with this exact line and add 3 more lines.`
-        } else if (lineCount === 2) {
-          userPrompt = `Complete this sampiran by adding 2 more lines (isi):
-
-${input}
-[Add line 3 here - must rhyme with line 1]
-[Add line 4 here - must rhyme with line 2]
-
-The first 2 lines are given above. You must use them exactly and add 2 more lines.`
-        } else if (lineCount === 3) {
-          userPrompt = `Complete this pantun by adding the final line:
-
-${input}
-[Add line 4 here - must rhyme with line 2]
-
-The first 3 lines are given above. You must use them exactly and add only line 4.`
-        } else {
-          userPrompt = `Fix this pantun to have correct structure:
-"${input}"
-
-Ensure 4 lines with a-b-a-b rhyme pattern.`
-        }
         break
       
       case 'mood':

@@ -76,12 +76,15 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
         return (
           <div className="modern-card p-3 sm:p-4">
             <TextArea
-              label="Masukkan baris pantun yang sudah ada (1-3 baris):"
+              label="Masukkan 1 baris pantun yang sudah ada:"
               value={input}
               onChange={setInput}
-              placeholder="Contoh:&#10;Ikan lele minum bir&#10;Ikan hiu makan tomat"
-              rows={3}
+              placeholder="Contoh: Ikan lele minum bir"
+              rows={1}
             />
+            <p className="text-xs text-gray-600 mt-2">
+              💡 Masukkan hanya 1 baris, sistem akan melengkapi menjadi 4 baris pantun
+            </p>
           </div>
         )
       
