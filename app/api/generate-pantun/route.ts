@@ -14,6 +14,14 @@ export async function POST(request: NextRequest) {
 
     let systemPrompt = `Anda adalah ahli pantun tradisional Indonesia. Buat pantun dengan struktur yang BENAR:
 
+ATURAN KETAT - WAJIB DIPATUHI:
+- HANYA gunakan kata-kata Bahasa Indonesia yang BENAR dan UMUM
+- DILARANG membuat kata baru atau kata yang tidak ada
+- DILARANG menggunakan kata yang aneh atau tidak natural
+- Setiap baris harus BERMAKNA dan masuk akal
+- Jika tidak bisa menemukan rima yang natural, coba kata lain
+- Gunakan kata-kata yang sudah dikenal masyarakat Indonesia
+
 STRUKTUR PANTUN:
 - Baris 1-2: SAMPIRAN (deskripsi alam/kehidupan, TIDAK perlu berhubungan dengan pesan)
 - Baris 3-4: ISI (pesan/nasihat yang bermakna)
@@ -55,6 +63,22 @@ Semak-semak lalu dibersihkan
 The power of emak-emak
 Sein ke kiri belok ke kanan"
 → Rima: semak/dibersihkan (ak-an), emak/kanan (ak-an)
+
+CONTOH SALAH (JANGAN BUAT SEPERTI INI):
+❌ "Pergi ke pasar membeli sayur"
+   "Sayur kangkung MENYAYURKAN" ← SALAH! kata tidak ada
+   "Jangan suka menunda-nunda"
+   "Nanti menyesal MENYAYUR-SAYUR" ← SALAH! tidak masuk akal
+
+❌ "Jalan-jalan ke pantai barat"
+   "Barat timur MEMBARATKAN" ← SALAH! kata tidak natural
+   "Hidup ini penuh arti"
+   "Jaga hati MEMBARATKAN" ← SALAH! tidak bermakna
+
+❌ "Bunga mawar di taman"
+   "Taman bunga MEMBUNGAKAN" ← SALAH! kata tidak ada
+   "Cinta itu suci"
+   "Jangan MEMBUNGAKAN" ← SALAH! tidak masuk akal
 
 WAJIB:
 - Rima a-b-a-b sempurna dengan bunyi yang sama (contoh: -ing dengan -ing, -ar dengan -ar, -an dengan -an)
@@ -103,6 +127,67 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
       
       default:
         return NextResponse.json({ error: 'Mode tidak valid' }, { status: 400 })
+    }
+
+    // Function to validate word quality and prevent made-up words
+    const validateWords = (pantun: string): boolean => {
+      const words = pantun.toLowerCase()
+        .replace(/[.,!?;:]/g, '')
+        .split(/\s+/)
+      
+      let suspiciousWords = 0
+      for (const word of words) {
+        // Check for suspicious patterns
+        if (word.length > 20) return false // Too long
+        if (word.includes('kan') && word.length > 8 && word.endsWith('kan')) {
+          // Check for made-up -kan verbs
+          const base = word.slice(0, -3)
+          if (base.length > 5 && !isValidIndonesianBase(base)) {
+            suspiciousWords++
+          }
+        }
+        if (word.includes('an') && word.length > 10 && word.endsWith('an')) {
+          // Check for made-up -an nouns
+          const base = word.slice(0, -2)
+          if (base.length > 6 && !isValidIndonesianBase(base)) {
+            suspiciousWords++
+          }
+        }
+      }
+      
+      // Allow max 1 suspicious word per pantun
+      return suspiciousWords <= 1
+    }
+
+    // Helper function to check if a word base is valid Indonesian
+    const isValidIndonesianBase = (base: string): boolean => {
+      const commonBases = [
+        'makan', 'minum', 'jalan', 'duduk', 'tidur', 'bangun', 'kerja', 'belajar',
+        'membeli', 'menjual', 'membuat', 'mengajar', 'menulis', 'membaca',
+        'rumah', 'sekolah', 'pasar', 'taman', 'pantai', 'gunung', 'sungai',
+        'sayur', 'buah', 'ikan', 'ayam', 'sapi', 'kambing', 'kucing', 'anjing'
+      ]
+      return commonBases.some(common => base.includes(common) || common.includes(base))
+    }
+
+    // Function to validate semantic coherence
+    const validateSemantics = (pantun: string): boolean => {
+      const words = pantun.toLowerCase().split(/\s+/)
+      const wordFreq = new Map()
+      
+      for (const word of words) {
+        wordFreq.set(word, (wordFreq.get(word) || 0) + 1)
+      }
+      
+      // Flag if same uncommon word appears 3+ times
+      let hasRepetitiveWords = false
+      wordFreq.forEach((count, word) => {
+        if (count >= 3 && word.length > 5) {
+          hasRepetitiveWords = true
+        }
+      })
+      
+      return !hasRepetitiveWords
     }
 
     // Function to validate rhyme pattern (a-b-a-b) with proper Indonesian phonetic matching
@@ -187,9 +272,9 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
 
     // Function to generate pantun with retry logic
     const generatePantunWithRetry = async (attempt: number = 1): Promise<string> => {
-      // More conservative temperature progression for better structure
-      const temperature = attempt === 1 ? 0.7 : attempt === 2 ? 0.6 : 0.5
-      const top_p = attempt === 1 ? 0.85 : attempt === 2 ? 0.8 : 0.75
+      // More conservative temperature progression for better quality
+      const temperature = attempt === 1 ? 0.5 : attempt === 2 ? 0.4 : 0.3
+      const top_p = attempt === 1 ? 0.7 : attempt === 2 ? 0.65 : 0.6
       
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -206,8 +291,8 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
           max_tokens: 150,
           temperature,
           top_p,
-          frequency_penalty: 0.1,
-          presence_penalty: 0.1,
+          frequency_penalty: 0.3,
+          presence_penalty: 0.2,
         }),
       })
 
@@ -225,24 +310,43 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
       return pantun
     }
 
+    // Fallback pantuns for when all attempts fail
+    const fallbackPantuns = [
+      "Jalan-jalan ke tepi pantai\nMelihat ombak bergulung-gulung\nHidup ini penuh arti\nJaga selalu hati yang tenang",
+      "Bunga mawar di taman\nHarum semerbak di pagi hari\nCinta sejati takkan pudar\nSelamanya di dalam hati",
+      "Ikan berenang di kolam\nAir jernih mengalir tenang\nBelajar rajin setiap hari\nAgar masa depan cerah",
+      "Burung berkicau di dahan\nSuara merdu di pagi hari\nJangan pernah menyerah\nTerus berjuang dengan hati",
+      "Matahari terbit di timur\nMenyinari bumi yang luas\nBerbuat baik setiap saat\nAgar hidup penuh berkah"
+    ]
+
     // Try to generate pantun with validation and retry
     let pantun = ''
     let attempts = 0
-    const maxAttempts = 5
+    const maxAttempts = 7
 
     while (attempts < maxAttempts) {
       attempts++
       try {
         pantun = await generatePantunWithRetry(attempts)
         
-        // Validate rhyme pattern
-        if (validateRhyme(pantun)) {
+        // Multi-stage validation
+        const rhymeValid = validateRhyme(pantun)
+        const wordsValid = validateWords(pantun)
+        const semanticsValid = validateSemantics(pantun)
+        
+        console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}`)
+        
+        if (rhymeValid && wordsValid && semanticsValid) {
+          console.log('All validations passed!')
           break
         } else if (attempts < maxAttempts) {
-          console.log(`Attempt ${attempts}: Rhyme validation failed, retrying...`)
+          console.log(`Attempt ${attempts}: Validation failed, retrying...`)
           continue
         } else {
-          console.log('Max attempts reached, returning best result')
+          console.log('Max attempts reached, using fallback pantun')
+          // Use fallback pantun when all attempts fail
+          pantun = fallbackPantuns[Math.floor(Math.random() * fallbackPantuns.length)]
+          break
         }
       } catch (error) {
         if (attempts >= maxAttempts) {
