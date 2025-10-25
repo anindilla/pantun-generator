@@ -196,6 +196,8 @@ Segera ke warung untuk makan.`
       const pantunText = pantun.toLowerCase()
       const moodLower = mood.toLowerCase()
       
+      console.log(`Mood validation: checking mood="${mood}" against pantun="${pantun}"`)
+      
       // Check for mood-specific keywords
       const moodKeywords = {
         'lapar': ['lapar', 'makan', 'perut', 'nasi', 'makanan', 'keroncongan', 'makan'],
@@ -210,6 +212,7 @@ Segera ke warung untuk makan.`
       for (const [moodKey, keywords] of Object.entries(moodKeywords)) {
         if (moodLower.includes(moodKey)) {
           expectedKeywords = keywords
+          console.log(`Found mood category: ${moodKey}, keywords: ${keywords.join(', ')}`)
           break
         }
       }
@@ -217,13 +220,17 @@ Segera ke warung untuk makan.`
       // If no specific mood found, check if mood words appear in pantun
       if (expectedKeywords.length === 0) {
         const moodWords = moodLower.split(' ').filter(word => word.length > 2)
-        return moodWords.some(word => pantunText.includes(word))
+        console.log(`No specific mood category found, checking mood words: ${moodWords.join(', ')}`)
+        const hasMoodWords = moodWords.some(word => pantunText.includes(word))
+        console.log(`Mood validation result: ${hasMoodWords}`)
+        return hasMoodWords
       }
       
       // Check if any expected keywords appear in the pantun
       const hasMoodKeywords = expectedKeywords.some(keyword => pantunText.includes(keyword))
-      
-      console.log(`Mood validation: mood="${mood}", hasKeywords=${hasMoodKeywords}`)
+      console.log(`Expected keywords: ${expectedKeywords.join(', ')}`)
+      console.log(`Found keywords in pantun: ${hasMoodKeywords}`)
+      console.log(`Mood validation result: ${hasMoodKeywords}`)
       return hasMoodKeywords
     }
 
