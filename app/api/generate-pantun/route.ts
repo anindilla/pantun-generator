@@ -172,29 +172,56 @@ STUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
         const lineCount = inputLines.length
         
         if (lineCount === 1) {
-          userPrompt = `Complete this first line into a full 4-line pantun:\n"${input}"\n\nSTUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
-- Use natural, flowing Indonesian language like the examples
-- Make it meaningful and connected to the input
-- Follow the exact rhyme pattern like the examples
-- Maintain a-b-a-b rhyme. Lines 1-2 = sampiran, lines 3-4 = isi.`
+          userPrompt = `CRITICAL: You MUST continue from the given first line. Do NOT create a completely new pantun.
+
+Complete this first line into a full 4-line pantun:
+"${input}"
+
+REQUIREMENTS:
+- MUST use the given first line exactly as provided
+- Add 3 more lines to complete the pantun
+- Maintain a-b-a-b rhyme pattern
+- Lines 1-2 = sampiran (imagery), lines 3-4 = isi (meaning)
+- Use natural, flowing Indonesian language
+- Make it meaningful and connected to the input line`
         } else if (lineCount === 2) {
-          userPrompt = `Complete this sampiran into a full 4-line pantun:\n"${input}"\n\nSTUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
-- Use natural, flowing Indonesian language like the examples
-- Make it meaningful and connected to the input
-- Follow the exact rhyme pattern like the examples
-- Add 2 lines of isi with a-b-a-b rhyme.`
+          userPrompt = `CRITICAL: You MUST continue from the given sampiran. Do NOT create a completely new pantun.
+
+Complete this sampiran into a full 4-line pantun:
+"${input}"
+
+REQUIREMENTS:
+- MUST use the given 2 lines exactly as provided
+- Add 2 more lines (isi) to complete the pantun
+- Maintain a-b-a-b rhyme pattern
+- Lines 1-2 = sampiran (given), lines 3-4 = isi (new)
+- Use natural, flowing Indonesian language
+- Make it meaningful and connected to the given sampiran`
         } else if (lineCount === 3) {
-          userPrompt = `Complete this pantun with the final line:\n"${input}"\n\nSTUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
-- Use natural, flowing Indonesian language like the examples
-- Make it meaningful and connected to the input
-- Follow the exact rhyme pattern like the examples
-- Maintain a-b-a-b rhyme pattern.`
+          userPrompt = `CRITICAL: You MUST continue from the given 3 lines. Do NOT create a completely new pantun.
+
+Complete this pantun with the final line:
+"${input}"
+
+REQUIREMENTS:
+- MUST use the given 3 lines exactly as provided
+- Add only 1 final line to complete the pantun
+- Maintain a-b-a-b rhyme pattern
+- The final line must rhyme with line 2
+- Use natural, flowing Indonesian language
+- Make it meaningful and connected to the given lines`
         } else {
-          userPrompt = `Fix this pantun to have correct structure:\n"${input}"\n\nSTUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
-- Use natural, flowing Indonesian language like the examples
-- Make it meaningful and connected to the input
-- Follow the exact rhyme pattern like the examples
-- Ensure 4 lines, a-b-a-b rhyme, lines 1-2 sampiran, lines 3-4 isi.`
+          userPrompt = `CRITICAL: You MUST fix the given pantun. Do NOT create a completely new pantun.
+
+Fix this pantun to have correct structure:
+"${input}"
+
+REQUIREMENTS:
+- MUST use the given lines as the foundation
+- Fix the structure to be 4 lines with a-b-a-b rhyme
+- Lines 1-2 = sampiran, lines 3-4 = isi
+- Use natural, flowing Indonesian language
+- Make it meaningful and connected to the given content`
         }
         break
       
@@ -519,38 +546,38 @@ Segera ke warung untuk makan.`
       // More conservative parameters for natural, high-quality output
       const temperature = attempt === 1 ? 0.7 : attempt === 2 ? 0.6 : 0.5
       const top_p = attempt === 1 ? 0.85 : attempt === 2 ? 0.8 : 0.75
-      
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
           model: "llama-3.1-8b-instant",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt }
-          ],
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
           max_tokens: 200, // Increased from 150 for more flexibility
           temperature,
           top_p,
           frequency_penalty: 0.5, // Increased from 0.3 to reduce repetition
           presence_penalty: 0.3,  // Increased from 0.2 for more variety
-        }),
-      })
+      }),
+    })
 
-      if (!response.ok) {
+    if (!response.ok) {
         const errorText = await response.text()
         console.error('Groq API error response:', errorText)
         throw new Error(`Groq API error: ${response.status} ${response.statusText} - ${errorText}`)
-      }
+    }
 
-      const completion = await response.json()
-      const pantun = completion.choices[0]?.message?.content?.trim()
+    const completion = await response.json()
+    const pantun = completion.choices[0]?.message?.content?.trim()
 
-      if (!pantun) {
-        throw new Error('Gagal menghasilkan pantun')
+    if (!pantun) {
+      throw new Error('Gagal menghasilkan pantun')
       }
 
       return pantun
