@@ -485,8 +485,8 @@ Segera ke warung untuk makan.`
         "Burung terbang jauh ke langit,\nMeninggalkan sarang yang sunyi.\nHati ini terasa sakit,\nKehilangan yang tak terlupakan."
       ],
       'senang': [
-        "Matahari bersinar cerah,\nBurung berkicau riang gembira.\nHati ini penuh sukacita,\nBahagia rasanya tiada tara.",
-        "Bunga mekar di taman indah,\nWarna-warni menghiasi pagi.\nSenyuman lebar di wajah,\nKegembiraan memenuhi hati."
+        "Bunga mawar warnanya merah,\nMekar indah di taman hati.\nCintaku padamu takkan goyah,\nSampai akhir hayat ini.",
+        "Jalan-jalan ke kota tua,\nBeli oleh-oleh manisan pepaya.\nCinta kita setia selamanya,\nBerdua selalu dalam bahagia."
       ],
       'marah': [
         "Guntur menggelegar di langit,\nPetir menyambar dengan dahsyat.\nHati ini penuh amarah,\nKesal yang sulit tertahankan.",
@@ -509,11 +509,16 @@ Segera ke warung untuk makan.`
         "Burung pulang ke sarangnya,\nSetelah seharian terbang.\nTubuh ini penuh kelelahan,\nIngin tidur dengan tenang."
       ],
       'default': [
-        "Jalan-jalan ke tepi pantai,\nMelihat ombak bergulung-gulung.\nHidup ini penuh arti,\nJaga selalu hati yang tenang.",
-        "Bunga mekar di taman indah,\nWarna-warni menghiasi pagi.\nSenyuman lebar di wajah,\nKegembiraan memenuhi hati.",
-        "Matahari terbit di timur,\nMenyinari bumi dengan hangat.\nHidup ini penuh makna,\nBersyukur atas karunia Tuhan.",
+        "Jalan-jalan ke kota Blitar,\nBeli onde di pinggir kali.\nKalau hati sedang bergetar,\nTandanya rindu mulai bersemi.",
+        "Bunga mawar warnanya merah,\nMekar indah di taman hati.\nCintaku padamu takkan goyah,\nSampai akhir hayat ini.",
+        "Ke pasar beli mangga muda,\nMangga dimakan manis terasa.\nRajin belajar sepanjang masa,\nAgar kelak hidup bahagia.",
         "Burung berkicau di pagi hari,\nSuara merdu mengisi udara.\nHati yang bersih dan suci,\nMembawa damai sepanjang masa.",
-        "Angin sepoi-sepoi berhembus,\nMembawa kesejukan di hati.\nPerjalanan hidup yang indah,\nPenuh dengan harapan suci."
+        "Matahari terbit di pagi hari,\nCahaya menyinari bumi pertiwi.\nGuru adalah pahlawan sejati,\nMenyebar ilmu demi generasi.",
+        "Terbang tinggi si burung dara,\nHinggap sebentar di pohon jati.\nJangan biarkan hati terluka,\nMeski cobaan datang silih berganti.",
+        "Menyusur pantai saat senja,\nOmbak tenang di tepi laut.\nMeski hidup penuh duka,\nTetaplah kuat, jangan surut.",
+        "Beli baju warna biru,\nUntuk dipakai saat ke kota.\nJika mimpi besar yang kau tuju,\nRajin belajar hingga dewasa.",
+        "Daun jatuh dari rantingnya,\nAngin datang menyapa ringan.\nSetiap langkah punya maknanya,\nUntuk kuatkan jiwa yang bertahan.",
+        "Ke pasar beli si buah naga,\nDimasukkan ke dalam tas merah.\nJangan kau takut pada gagal,\nKarena sukses ada setelah lelah."
       ]
     }
 
