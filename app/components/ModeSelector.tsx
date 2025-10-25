@@ -40,7 +40,7 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
           className={`mode-card ${selectedMode === mode.id ? 'selected' : ''}`}
           onClick={() => onModeSelect(mode.id)}
         >
-          <div className="p-4 sm:p-6 text-center relative z-10">
+          <div className="p-3 sm:p-6 text-center relative z-10">
             <div className="mode-icon text-3xl sm:text-4xl mb-4">
               {mode.icon}
             </div>

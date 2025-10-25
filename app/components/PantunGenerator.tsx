@@ -126,7 +126,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2 sm:py-4">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-1 sm:py-2">
       {/* Header */}
       <div className="text-center mb-3 sm:mb-4 animate-fade-in">
         <h1 className="hero-title">
@@ -147,20 +147,15 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
       {/* Input Area */}
       {selectedMode && (
-        <div className="mb-4 sm:mb-6 animate-stagger" style={{ paddingBottom: '80px' }}>
+        <div className="mb-4 sm:mb-6 animate-stagger">
           {renderInputArea()}
-        </div>
-      )}
-
-      {/* Sticky Action Button - Only visible when mode is selected */}
-      {selectedMode && (
-        <div className="sticky-action-bar">
-          <div className="max-w-3xl mx-auto">
+          
+          <div className="flex justify-center mt-3 sm:mt-4">
             <Button
               onClick={handleGenerate}
               disabled={!canGenerate() || isLoading}
               size="md"
-              className="w-full"
+              className="min-w-[200px] sm:min-w-[240px]"
             >
               {isLoading ? 'Membuat Pantun...' : 'Buat Pantun'}
             </Button>
@@ -177,7 +172,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
       {/* Result Display */}
       {generatedPantun && (
-        <div className="animate-bounce-gentle" style={{ paddingBottom: selectedMode ? '80px' : '0' }}>
+        <div className="animate-bounce-gentle">
           <PantunDisplay
             pantun={generatedPantun}
             onGenerateNew={handleGenerateNew}
