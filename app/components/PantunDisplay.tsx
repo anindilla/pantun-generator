@@ -36,16 +36,18 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
 
   const handleShare = async () => {
     try {
-      if (navigator.share && shareUrl) {
+      const shareText = `${pantun}\n\nBuat pantun Anda sendiri di pantun-generator.vercel.app`
+      
+      if (navigator.share) {
         await navigator.share({
           title: 'Pantun Generator',
-          text: pantun,
-          url: shareUrl
+          text: shareText,
+          url: window.location.origin
         })
         trackPantunShared(mode || 'unknown', 'native_share')
-      } else if (shareUrl) {
-        await navigator.clipboard.writeText(shareUrl)
-        trackPantunShared(mode || 'unknown', 'copy_link')
+      } else {
+        await navigator.clipboard.writeText(shareText)
+        trackPantunShared(mode || 'unknown', 'copy_text')
         setShared(true)
         setTimeout(() => setShared(false), 2000)
       }
@@ -93,26 +95,24 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
           )}
         </Button>
 
-        {shareUrl && (
-          <Button
-            onClick={handleShare}
-            variant="secondary"
-            size="sm"
-            className="flex items-center justify-center gap-2 min-w-[100px] sm:min-w-[120px]"
-          >
-            {shared ? (
-              <>
-                <FiCheck className="w-4 h-4" />
-                Link Tersalin!
-              </>
-            ) : (
-              <>
-                <FiShare2 className="w-4 h-4" />
-                Bagikan
-              </>
-            )}
-          </Button>
-        )}
+        <Button
+          onClick={handleShare}
+          variant="secondary"
+          size="sm"
+          className="flex items-center justify-center gap-2 min-w-[100px] sm:min-w-[120px]"
+        >
+          {shared ? (
+            <>
+              <FiCheck className="w-4 h-4" />
+              Link Tersalin!
+            </>
+          ) : (
+            <>
+              <FiShare2 className="w-4 h-4" />
+              Bagikan
+            </>
+          )}
+        </Button>
         
         <Button
           onClick={onGenerateNew}

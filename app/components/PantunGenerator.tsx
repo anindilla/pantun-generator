@@ -152,9 +152,9 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2 sm:py-4">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-1 sm:py-2">
       {/* Header */}
-      <div className="text-center mb-6 sm:mb-8 animate-fade-in">
+      <div className="text-center mb-4 sm:mb-6 animate-fade-in">
         <h1 className="hero-title">
           Pantun Generator
         </h1>
@@ -173,10 +173,10 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
       {/* Input Area */}
       {selectedMode && (
-        <div className="mb-6 sm:mb-8 animate-stagger">
+        <div className="mb-4 sm:mb-6 animate-stagger">
           {renderInputArea()}
           
-          <div className="flex justify-center mt-4 sm:mt-6">
+          <div className="flex justify-center mt-3 sm:mt-4">
             <Button
               onClick={handleGenerate}
               disabled={!canGenerate() || isLoading}
