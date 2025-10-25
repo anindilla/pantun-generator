@@ -284,7 +284,7 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: "llama-3.1-70b-versatile",
+          model: "llama-3.1-8b-instant",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
@@ -325,38 +325,43 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
     // Try to generate pantun with validation and retry
     let pantun = ''
     let attempts = 0
-    const maxAttempts = 7
+    const maxAttempts = 3 // Reduced attempts for faster fallback
 
-    while (attempts < maxAttempts) {
-      attempts++
-      try {
-        pantun = await generatePantunWithRetry(attempts)
-        
-        // Multi-stage validation
-        const rhymeValid = validateRhyme(pantun)
-        const wordsValid = validateWords(pantun)
-        const semanticsValid = validateSemantics(pantun)
-        
-        console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}`)
-        
-        if (rhymeValid && wordsValid && semanticsValid) {
-          console.log('All validations passed!')
-          break
-        } else if (attempts < maxAttempts) {
-          console.log(`Attempt ${attempts}: Validation failed, retrying...`)
-          continue
-        } else {
-          console.log('Max attempts reached, using fallback pantun')
-          // Use fallback pantun when all attempts fail
-          pantun = fallbackPantuns[Math.floor(Math.random() * fallbackPantuns.length)]
-          break
+    try {
+      while (attempts < maxAttempts) {
+        attempts++
+        try {
+          pantun = await generatePantunWithRetry(attempts)
+          
+          // Multi-stage validation
+          const rhymeValid = validateRhyme(pantun)
+          const wordsValid = validateWords(pantun)
+          const semanticsValid = validateSemantics(pantun)
+          
+          console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}`)
+          
+          if (rhymeValid && wordsValid && semanticsValid) {
+            console.log('All validations passed!')
+            break
+          } else if (attempts < maxAttempts) {
+            console.log(`Attempt ${attempts}: Validation failed, retrying...`)
+            continue
+          } else {
+            console.log('Max attempts reached, using fallback pantun')
+            // Use fallback pantun when all attempts fail
+            pantun = fallbackPantuns[Math.floor(Math.random() * fallbackPantuns.length)]
+            break
+          }
+        } catch (error) {
+          console.log(`Attempt ${attempts} failed:`, error instanceof Error ? error.message : String(error))
+          if (attempts >= maxAttempts) {
+            throw error
+          }
         }
-      } catch (error) {
-        if (attempts >= maxAttempts) {
-          throw error
-        }
-        console.log(`Attempt ${attempts} failed, retrying...`)
       }
+    } catch (error) {
+      console.log('All API attempts failed, using fallback pantun')
+      pantun = fallbackPantuns[Math.floor(Math.random() * fallbackPantuns.length)]
     }
 
     return NextResponse.json({ pantun })
