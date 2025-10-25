@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   description: 'Buat pantun indah dengan AI. Pilih mode acak, lanjutkan pantun, atau buat pantun sesuai suasana hati Anda.',
   keywords: 'pantun, puisi, melayu, indonesia, AI, generator',
   authors: [{ name: 'Pantun Generator' }],
+  icons: {
+    icon: '/icon.svg',
+    apple: '/apple-icon.svg',
+  },
   openGraph: {
     title: 'Pantun Generator',
     description: 'Buat pantun indah dengan AI. Pilih mode acak, lanjutkan pantun, atau buat pantun sesuai suasana hati Anda.',

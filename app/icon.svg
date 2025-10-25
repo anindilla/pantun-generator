@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" fill="white"/>
+  <text x="8" y="24" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="black">PG</text>
+  <!-- Add the triangular shadow effect -->
+  <g opacity="0.2">
+    <polygon points="10,26 12,28 8,30" fill="#999999"/>
+    <polygon points="12,28 14,30 10,32" fill="#999999"/>
+    <polygon points="14,30 16,32 12,34" fill="#999999"/>
+    <polygon points="16,32 18,34 14,36" fill="#999999"/>
+    <polygon points="18,34 20,36 16,38" fill="#999999"/>
+    <polygon points="20,36 22,38 18,40" fill="#999999"/>
+    <polygon points="22,38 24,40 20,42" fill="#999999"/>
+    <polygon points="24,40 26,42 22,44" fill="#999999"/>
+  </g>
+</svg>
