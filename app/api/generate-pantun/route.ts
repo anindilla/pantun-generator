@@ -44,10 +44,17 @@ Banyak harta miskin ilmu
 Bagai rumah tidak berdinding"
 → Rima: tebu/ilmu (u-u), daging/berdinding (ing-ing)
 
+"Hujan turun di pagi buta
+Membasahi bumi yang kering
+Hati yang baik membawa kita
+Menghadapi rintangan dengan tahan banting"
+→ Rima: buta/kita (a-a), kering/tahan banting (ing-ing)
+
 WAJIB:
-- Rima a-b-a-b sempurna dengan bunyi yang sama
+- Rima a-b-a-b sempurna dengan bunyi yang sama (contoh: -ing dengan -ing, -ar dengan -ar, -an dengan -an)
 - Sampiran dan isi TIDAK perlu berhubungan
 - Bahasa natural, bermakna
+- Pastikan kata terakhir setiap baris memiliki pola bunyi yang sama
 - Format: Hanya pantun, tanpa penjelasan`
 
     let userPrompt = ''
@@ -92,33 +99,52 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
         return NextResponse.json({ error: 'Mode tidak valid' }, { status: 400 })
     }
 
-    // Function to validate rhyme pattern (a-b-a-b) with phonetic matching
+    // Function to validate rhyme pattern (a-b-a-b) with improved Indonesian phonetic matching
     const validateRhyme = (pantun: string): boolean => {
       const lines = pantun.split('\n').filter((line: string) => line.trim())
       if (lines.length !== 4) return false
       
-      const getLastSyllable = (line: string): string => {
+      const getLastSyllables = (line: string): string => {
         const cleaned = line.trim().replace(/[.,!?;:]$/, '')
         const words = cleaned.split(' ')
         const lastWord = words[words.length - 1].toLowerCase()
         
-        // Remove common suffixes that don't affect rhyme
-        const withoutSuffix = lastWord
-          .replace(/nya$/, '')
-          .replace(/lah$/, '')
-          .replace(/kah$/, '')
-          .replace(/kan$/, '')
-          .replace(/an$/, '')
+        // Get last 2-3 syllables for better rhyme detection
+        // Handle common Indonesian patterns
+        if (lastWord.endsWith('ing')) return 'ing'
+        if (lastWord.endsWith('ang')) return 'ang'
+        if (lastWord.endsWith('ung')) return 'ung'
+        if (lastWord.endsWith('eng')) return 'eng'
+        if (lastWord.endsWith('ong')) return 'ong'
+        if (lastWord.endsWith('an')) return 'an'
+        if (lastWord.endsWith('en')) return 'en'
+        if (lastWord.endsWith('in')) return 'in'
+        if (lastWord.endsWith('on')) return 'on'
+        if (lastWord.endsWith('un')) return 'un'
+        if (lastWord.endsWith('ar')) return 'ar'
+        if (lastWord.endsWith('er')) return 'er'
+        if (lastWord.endsWith('ir')) return 'ir'
+        if (lastWord.endsWith('or')) return 'or'
+        if (lastWord.endsWith('ur')) return 'ur'
+        if (lastWord.endsWith('as')) return 'as'
+        if (lastWord.endsWith('es')) return 'es'
+        if (lastWord.endsWith('is')) return 'is'
+        if (lastWord.endsWith('os')) return 'os'
+        if (lastWord.endsWith('us')) return 'us'
+        if (lastWord.endsWith('ah')) return 'ah'
+        if (lastWord.endsWith('eh')) return 'eh'
+        if (lastWord.endsWith('ih')) return 'ih'
+        if (lastWord.endsWith('oh')) return 'oh'
+        if (lastWord.endsWith('uh')) return 'uh'
         
-        // Extract last syllable (consonant + vowel pattern)
-        const syllableMatch = withoutSuffix.match(/[^aiueo]*[aiueo]+[^aiueo]*$/)
-        return syllableMatch ? syllableMatch[0] : withoutSuffix.slice(-3)
+        // For single syllable words, get the last 2-3 characters
+        return lastWord.slice(-3)
       }
       
-      const rhyme1 = getLastSyllable(lines[0])
-      const rhyme2 = getLastSyllable(lines[1])
-      const rhyme3 = getLastSyllable(lines[2])
-      const rhyme4 = getLastSyllable(lines[3])
+      const rhyme1 = getLastSyllables(lines[0])
+      const rhyme2 = getLastSyllables(lines[1])
+      const rhyme3 = getLastSyllables(lines[2])
+      const rhyme4 = getLastSyllables(lines[3])
       
       // Log for debugging
       console.log(`Rhyme validation: Line 1 (${rhyme1}) vs Line 3 (${rhyme3})`)
