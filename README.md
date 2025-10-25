@@ -1,7 +1,6 @@
 # Pantun Generator
-
-A simple web app to make pantun with AI. Made with Next.js, TypeScript, and Groq API
-Access here: https://pantun-generator.vercel.app/
+- You can access the website here: https://pantun-generator.vercel.app/
+- Pantun Generator is a simple web app to make pantun with AI. Made with Next.js, TypeScript, and Groq API.
 
 ## Features
 - **Acak**: Make completely random pantun, just whatever, really
