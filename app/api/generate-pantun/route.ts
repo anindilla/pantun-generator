@@ -56,6 +56,10 @@ export async function POST(request: NextRequest) {
 - DO NOT explain or comment—output pantun only.
 - DO NOT repeat same rhyme endings for all lines.
 - DO NOT force words just to make it rhyme. If it sounds unnatural, change it.
+- DO NOT create made-up words or nonsensical phrases.
+- DO NOT use words that don't exist in Indonesian language.
+- DO NOT combine random syllables to create fake words.
+- ONLY use real, common Indonesian words that people actually use.
 - Example of GOOD pantun with EXACT rhyme:
   Jalan-jalan ke kota Blitar,  (ends with "ar")
   Beli onde di pinggir kali.   (ends with "li")
@@ -68,9 +72,23 @@ export async function POST(request: NextRequest) {
   Lapar sekali ingin makan,        (ends with "an" - EXACT match with line 1)
   Segera ke warung untuk makan.   (ends with "an" - EXACT match with line 2)
 
+# EXAMPLES OF WHAT NOT TO DO:
+❌ WRONG - Made-up words:
+  "Berkelanjutan dengan berkelanjutan" (berkelanjutan is not a real word)
+  "Menggembirakan hati yang menggembirakan" (redundant and unnatural)
+
+❌ WRONG - Nonsensical phrases:
+  "Matahari terbit di malam hari" (contradictory)
+  "Air mengalir ke atas gunung" (impossible)
+
+❌ WRONG - Forced rhymes with fake words:
+  "Hati yang bergetar-getaran" (bergetar-getaran is not a real word)
+  "Mata yang berkedip-kedipan" (berkedip-kedipan is not a real word)
+
 Remember:
 ✅ Simple, rhythmic, emotionally natural.  
 ❌ No weird logic. No filler. No forced rhyme.  
+❌ No made-up words. No nonsensical phrases.  
 ❌ Never break the 4-line, a-b-a-b format.  
 Output pantun only. No extra text.`
 
@@ -141,38 +159,116 @@ Segera ke warung untuk makan.`
         .split(/\s+/)
       
       let suspiciousWords = 0
+      const madeUpWords: string[] = []
+      
       for (const word of words) {
         // Check for suspicious patterns
-        if (word.length > 20) return false // Too long
-        if (word.includes('kan') && word.length > 8 && word.endsWith('kan')) {
-          // Check for made-up -kan verbs
+        if (word.length > 15) {
+          console.log(`Suspicious long word: ${word}`)
+          suspiciousWords++
+          madeUpWords.push(word)
+        }
+        
+        // Check for made-up suffixes with stricter validation
+        if (word.endsWith('kan') && word.length > 6) {
           const base = word.slice(0, -3)
-          if (base.length > 5 && !isValidIndonesianBase(base)) {
+          if (!isValidIndonesianBase(base) && !isCommonIndonesianWord(base)) {
+            console.log(`Suspicious -kan suffix: ${word} (base: ${base})`)
             suspiciousWords++
+            madeUpWords.push(word)
           }
         }
-        if (word.includes('an') && word.length > 10 && word.endsWith('an')) {
-          // Check for made-up -an nouns
+        
+        if (word.endsWith('an') && word.length > 5) {
           const base = word.slice(0, -2)
-          if (base.length > 6 && !isValidIndonesianBase(base)) {
+          if (!isValidIndonesianBase(base) && !isCommonIndonesianWord(base)) {
+            console.log(`Suspicious -an suffix: ${word} (base: ${base})`)
             suspiciousWords++
+            madeUpWords.push(word)
           }
+        }
+        
+        // Check for made-up prefixes
+        if (word.startsWith('ber') && word.length > 6) {
+          const base = word.slice(3)
+          if (!isValidIndonesianBase(base) && !isCommonIndonesianWord(base)) {
+            console.log(`Suspicious ber- prefix: ${word} (base: ${base})`)
+            suspiciousWords++
+            madeUpWords.push(word)
+          }
+        }
+        
+        // Check for completely made-up words (no common patterns)
+        if (word.length > 4 && !isCommonIndonesianWord(word) && !isValidIndonesianBase(word)) {
+          console.log(`Potentially made-up word: ${word}`)
+          suspiciousWords++
+          madeUpWords.push(word)
         }
       }
       
-      // Allow max 1 suspicious word per pantun
-      return suspiciousWords <= 1
+      // Stricter validation - reject if any clearly made-up words
+      const isValid = suspiciousWords === 0
+      if (!isValid) {
+        console.log(`Word validation failed. Made-up words: ${madeUpWords.join(', ')}`)
+      }
+      console.log(`Word validation: ${suspiciousWords} suspicious words, valid: ${isValid}`)
+      return isValid
     }
 
     // Helper function to check if a word base is valid Indonesian
     const isValidIndonesianBase = (base: string): boolean => {
-      const commonBases = [
-        'makan', 'minum', 'jalan', 'duduk', 'tidur', 'bangun', 'kerja', 'belajar',
-        'membeli', 'menjual', 'membuat', 'mengajar', 'menulis', 'membaca',
-        'rumah', 'sekolah', 'pasar', 'taman', 'pantai', 'gunung', 'sungai',
-        'sayur', 'buah', 'ikan', 'ayam', 'sapi', 'kambing', 'kucing', 'anjing'
+      // Common Indonesian word patterns
+      const validPatterns = [
+        /^[a-z]{2,6}$/, // Basic 2-6 letter words
+        /^ber[a-z]{2,6}$/, // ber- prefix
+        /^ter[a-z]{2,6}$/, // ter- prefix
+        /^me[a-z]{2,6}$/, // me- prefix
+        /^di[a-z]{2,6}$/, // di- prefix
+        /^ke[a-z]{2,6}$/, // ke- prefix
+        /^se[a-z]{2,6}$/, // se- prefix
+        /^pe[a-z]{2,6}$/, // pe- prefix
       ]
-      return commonBases.some(common => base.includes(common) || common.includes(base))
+      
+      return validPatterns.some(pattern => pattern.test(base))
+    }
+    
+    // Helper function to check if a word is a common Indonesian word
+    const isCommonIndonesianWord = (word: string): boolean => {
+      const commonWords = [
+        // Basic words
+        'aku', 'kamu', 'dia', 'kita', 'kami', 'mereka', 'saya', 'anda',
+        'ini', 'itu', 'sana', 'sini', 'mana', 'kapan', 'bagaimana', 'mengapa',
+        'yang', 'dengan', 'untuk', 'dari', 'ke', 'di', 'pada', 'dalam', 'atas', 'bawah',
+        'besar', 'kecil', 'tinggi', 'rendah', 'panjang', 'pendek', 'lebar', 'sempit',
+        'baik', 'buruk', 'bagus', 'jelek', 'cantik', 'ganteng', 'tampan', 'cantik',
+        'makan', 'minum', 'tidur', 'bangun', 'jalan', 'lari', 'duduk', 'berdiri',
+        'rumah', 'kantor', 'sekolah', 'toko', 'pasar', 'jalan', 'jalanan', 'jalan',
+        'matahari', 'bulan', 'bintang', 'langit', 'bumi', 'air', 'api', 'angin',
+        'hujan', 'salju', 'panas', 'dingin', 'hangat', 'sejuk', 'lembab', 'kering',
+        'senang', 'sedih', 'marah', 'takut', 'gembira', 'bahagia', 'susah', 'sulit',
+        'mudah', 'sulit', 'cepat', 'lambat', 'baru', 'lama', 'tua', 'muda',
+        'lapar', 'kenyang', 'haus', 'dahaga', 'lelah', 'capek', 'segar', 'sehat',
+        'sakit', 'sehat', 'kuat', 'lemah', 'gemuk', 'kurus', 'tinggi', 'pendek',
+        'cinta', 'sayang', 'kasih', 'rindu', 'kangen', 'benci', 'marah', 'kesal',
+        'teman', 'sahabat', 'keluarga', 'ibu', 'bapak', 'ayah', 'ibu', 'anak',
+        'kakak', 'adik', 'nenek', 'kakek', 'paman', 'bibi', 'sepupu', 'saudara',
+        'buku', 'pena', 'pensil', 'kertas', 'meja', 'kursi', 'pintu', 'jendela',
+        'lampu', 'listrik', 'telepon', 'komputer', 'internet', 'televisi', 'radio',
+        'mobil', 'motor', 'sepeda', 'pesawat', 'kapal', 'kereta', 'bus', 'taksi',
+        'uang', 'duit', 'rupiah', 'dollar', 'murah', 'mahal', 'gratis', 'bayar',
+        'beli', 'jual', 'toko', 'pasar', 'warung', 'restoran', 'kafe', 'hotel',
+        'makanan', 'minuman', 'nasi', 'roti', 'daging', 'ikan', 'sayur', 'buah',
+        'air', 'susu', 'kopi', 'teh', 'jus', 'soda', 'bir', 'wine', 'minuman',
+        'pakaian', 'baju', 'celana', 'rok', 'sepatu', 'sandal', 'topi', 'jaket',
+        'warna', 'merah', 'biru', 'kuning', 'hijau', 'hitam', 'putih', 'abu-abu',
+        'bentuk', 'bulat', 'kotak', 'segitiga', 'persegi', 'lingkaran', 'garis',
+        'waktu', 'jam', 'menit', 'detik', 'hari', 'minggu', 'bulan', 'tahun',
+        'pagi', 'siang', 'sore', 'malam', 'senin', 'selasa', 'rabu', 'kamis',
+        'jumat', 'sabtu', 'minggu', 'januari', 'februari', 'maret', 'april',
+        'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember'
+      ]
+      
+      return commonWords.includes(word.toLowerCase())
     }
 
     // Function to validate semantic coherence
@@ -269,32 +365,49 @@ Segera ke warung untuk makan.`
       return hasMoodKeywords
     }
 
-    // Function to validate rhyme pattern (a-b-a-b) with EXACT last 2 characters
+    // Function to validate rhyme pattern (a-b-a-b) with flexible 2-3 character endings
     const validateRhyme = (pantun: string): boolean => {
       const lines = pantun.split('\n').filter((line: string) => line.trim())
       if (lines.length !== 4) return false
       
-      const getLastTwoChars = (line: string): string => {
+      const getRhymeEnding = (line: string): string => {
         const cleaned = line.trim().replace(/[.,!?;:]$/, '')
         const words = cleaned.split(' ')
         const lastWord = words[words.length - 1].toLowerCase()
         
-        // Get exactly the last 2 characters
+        // Try 3 characters first, then 2 characters
+        if (lastWord.length >= 3) {
+          const threeChars = lastWord.slice(-3)
+          // Check for common Indonesian 3-character endings
+          if (['ang', 'ung', 'ing', 'ong', 'eng', 'ing'].includes(threeChars)) {
+            return threeChars
+          }
+        }
+        
+        if (lastWord.length >= 2) {
+          const twoChars = lastWord.slice(-2)
+          // Check for common Indonesian 2-character endings
+          if (['an', 'un', 'in', 'on', 'en', 'at', 'it', 'ut', 'ot', 'et', 'ar', 'er', 'ir', 'or', 'ur', 'as', 'es', 'is', 'os', 'us', 'ah', 'eh', 'ih', 'oh', 'uh'].includes(twoChars)) {
+            return twoChars
+          }
+        }
+        
+        // Fallback to last 2 characters
         return lastWord.slice(-2)
       }
       
-      const rhyme1 = getLastTwoChars(lines[0])
-      const rhyme2 = getLastTwoChars(lines[1])
-      const rhyme3 = getLastTwoChars(lines[2])
-      const rhyme4 = getLastTwoChars(lines[3])
+      const rhyme1 = getRhymeEnding(lines[0])
+      const rhyme2 = getRhymeEnding(lines[1])
+      const rhyme3 = getRhymeEnding(lines[2])
+      const rhyme4 = getRhymeEnding(lines[3])
       
       // Log for debugging
       console.log(`Rhyme validation: Line 1 (${rhyme1}) vs Line 3 (${rhyme3})`)
       console.log(`Rhyme validation: Line 2 (${rhyme2}) vs Line 4 (${rhyme4})`)
       
-      // Check for EXACT character match (last 2 characters must be identical)
-      const isRhyme1 = rhyme1 === rhyme3 && rhyme1.length === 2
-      const isRhyme2 = rhyme2 === rhyme4 && rhyme2.length === 2
+      // Check for EXACT character match (flexible length)
+      const isRhyme1 = rhyme1 === rhyme3 && rhyme1.length >= 2
+      const isRhyme2 = rhyme2 === rhyme4 && rhyme2.length >= 2
       const isDifferent = rhyme1 !== rhyme2
       
       console.log(`Rhyme validation result: ${isRhyme1 && isRhyme2 && isDifferent}`)
