@@ -80,6 +80,59 @@ export async function POST(request: NextRequest) {
   Lapar sekali ingin makan,        (ends with "an" - EXACT match with line 1)
   Segera ke warung untuk makan.   (ends with "an" - EXACT match with line 2)
 
+# PERFECT EXAMPLES TO LEARN FROM:
+Here are examples of EXCELLENT pantuns with perfect a-b-a-b rhyme patterns:
+
+1. Humor/Jenaka:
+   "Jalan-jalan ke pinggir empang,     (ends with "empang")
+   Nemu katak di pinggir empang.       (ends with "empang")
+   Hati siapa tak bimbang,            (ends with "bimbang")
+   Kamu botak minta dikepang."         (ends with "kepang")
+   Pattern: empang/empang/bimbang/kepang (a-b-a-b)
+
+2. Social Commentary:
+   "Emak nyapu pakai sapu lidi,        (ends with "lidi")
+   Sudah lapar makan apa pun jadi.     (ends with "jadi")
+   Tak ada kerja, nganggur pun jadi,   (ends with "jadi")
+   Tak ada gigi, ompong pun jadi."      (ends with "jadi")
+   Pattern: lidi/jadi/jadi/jadi (a-b-a-b)
+
+3. Modern Life:
+   "Aku ingin ke Korea Selatan,        (ends with "Selatan")
+   Kamu justru ingin ke Jepang.       (ends with "Jepang")
+   Walaupun kita sudah jadi mantan,   (ends with "mantan")
+   Namun aku masih tetap sayang."      (ends with "sayang")
+   Pattern: Selatan/Jepang/mantan/sayang (a-b-a-b)
+
+4. Family Humor:
+   "Kapal berlayar di Laut Jawa,       (ends with "Jawa")
+   Nakhoda mengacungkan jempol.       (ends with "jempol")
+   Adik menangis lalu tertawa,        (ends with "tertawa")
+   Melihat kakak masih mengompol."     (ends with "mengompol")
+   Pattern: Jawa/jempol/tertawa/mengompol (a-b-a-b)
+
+5. Love/Romance:
+   "Bunga mawar warnanya merah,        (ends with "merah")
+   Mekar indah di taman hati.          (ends with "hati")
+   Cintaku padamu takkan goyah,       (ends with "goyah")
+   Sampai akhir hayat ini."            (ends with "ini")
+   Pattern: merah/hati/goyah/ini (a-b-a-b)
+
+6. Educational:
+   "Ke pasar beli mangga muda,         (ends with "muda")
+   Mangga dimakan manis terasa.        (ends with "terasa")
+   Rajin belajar sepanjang masa,      (ends with "masa")
+   Agar kelak hidup bahagia."          (ends with "bahagia")
+   Pattern: muda/terasa/masa/bahagia (a-b-a-b)
+
+STUDY THESE EXAMPLES CAREFULLY:
+- Notice how Line 1 & 3 ALWAYS end with the SAME sound/characters
+- Notice how Line 2 & 4 ALWAYS end with the SAME sound/characters  
+- Notice how the two rhyme patterns are DIFFERENT from each other
+- Notice the natural, flowing language
+- Notice the meaningful content that makes sense
+- Notice the proper Indonesian word usage
+
 # EXAMPLES OF WHAT NOT TO DO:
 ❌ WRONG - Made-up words:
   "Berkelanjutan dengan berkelanjutan" (berkelanjutan is not a real word)
@@ -104,7 +157,14 @@ Output pantun only. No extra text.`
 
     switch (mode) {
       case 'random':
-        userPrompt = 'Generate a random pantun with natural rhyme a-b-a-b. Keep it simple and emotionally natural.'
+        userPrompt = `Generate a random pantun with natural rhyme a-b-a-b. 
+
+STUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
+- Use natural, flowing Indonesian language like the examples
+- Make it meaningful and interesting like the humor/social commentary examples
+- Follow the exact rhyme pattern like the examples
+- Be creative but keep it grounded in real life
+- Keep it simple and emotionally natural.`
         break
       
       case 'continue':
@@ -112,19 +172,41 @@ Output pantun only. No extra text.`
         const lineCount = inputLines.length
         
         if (lineCount === 1) {
-          userPrompt = `Complete this first line into a full 4-line pantun:\n"${input}"\n\nMaintain a-b-a-b rhyme. Lines 1-2 = sampiran, lines 3-4 = isi.`
+          userPrompt = `Complete this first line into a full 4-line pantun:\n"${input}"\n\nSTUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
+- Use natural, flowing Indonesian language like the examples
+- Make it meaningful and connected to the input
+- Follow the exact rhyme pattern like the examples
+- Maintain a-b-a-b rhyme. Lines 1-2 = sampiran, lines 3-4 = isi.`
         } else if (lineCount === 2) {
-          userPrompt = `Complete this sampiran into a full 4-line pantun:\n"${input}"\n\nAdd 2 lines of isi with a-b-a-b rhyme.`
+          userPrompt = `Complete this sampiran into a full 4-line pantun:\n"${input}"\n\nSTUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
+- Use natural, flowing Indonesian language like the examples
+- Make it meaningful and connected to the input
+- Follow the exact rhyme pattern like the examples
+- Add 2 lines of isi with a-b-a-b rhyme.`
         } else if (lineCount === 3) {
-          userPrompt = `Complete this pantun with the final line:\n"${input}"\n\nMaintain a-b-a-b rhyme pattern.`
+          userPrompt = `Complete this pantun with the final line:\n"${input}"\n\nSTUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
+- Use natural, flowing Indonesian language like the examples
+- Make it meaningful and connected to the input
+- Follow the exact rhyme pattern like the examples
+- Maintain a-b-a-b rhyme pattern.`
         } else {
-          userPrompt = `Fix this pantun to have correct structure:\n"${input}"\n\nEnsure 4 lines, a-b-a-b rhyme, lines 1-2 sampiran, lines 3-4 isi.`
+          userPrompt = `Fix this pantun to have correct structure:\n"${input}"\n\nSTUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
+- Use natural, flowing Indonesian language like the examples
+- Make it meaningful and connected to the input
+- Follow the exact rhyme pattern like the examples
+- Ensure 4 lines, a-b-a-b rhyme, lines 1-2 sampiran, lines 3-4 isi.`
         }
         break
       
       case 'mood':
         const normalizedMood = normalizeMood(mood || '')
         userPrompt = `Generate a pantun about this specific mood: "${normalizedMood}"
+
+STUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
+- Use natural, flowing Indonesian language like the examples
+- Make it meaningful and connected to the mood
+- Follow the exact rhyme pattern like the examples
+- Be creative but keep it grounded in real life
 
 CRITICAL: The pantun MUST be about this mood. The content and imagery should relate to the feeling.
 
