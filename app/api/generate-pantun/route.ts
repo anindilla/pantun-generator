@@ -383,9 +383,13 @@ Segera ke warung untuk makan.`
         const words = cleaned.split(' ')
         const lastWord = words[words.length - 1].toLowerCase()
         
+        // For compound words like "bergulung-gulung", take the last part
+        const compoundParts = lastWord.split('-')
+        const actualLastWord = compoundParts[compoundParts.length - 1]
+        
         // Try 3 characters first for common Indonesian endings
-        if (lastWord.length >= 3) {
-          const threeChars = lastWord.slice(-3)
+        if (actualLastWord.length >= 3) {
+          const threeChars = actualLastWord.slice(-3)
           // Check for common Indonesian 3-character endings
           if (['ang', 'ung', 'ing', 'ong', 'eng'].includes(threeChars)) {
             return threeChars
@@ -393,16 +397,16 @@ Segera ke warung untuk makan.`
         }
         
         // Try 2 characters for shorter endings
-        if (lastWord.length >= 2) {
-          const twoChars = lastWord.slice(-2)
+        if (actualLastWord.length >= 2) {
+          const twoChars = actualLastWord.slice(-2)
           // Check for common Indonesian 2-character endings
-          if (['an', 'un', 'in', 'on', 'en', 'at', 'it', 'ut', 'ot', 'et', 'ar', 'er', 'ir', 'or', 'ur', 'as', 'es', 'is', 'os', 'us', 'ah', 'eh', 'ih', 'oh', 'uh'].includes(twoChars)) {
+          if (['an', 'un', 'in', 'on', 'en', 'at', 'it', 'ut', 'ot', 'et', 'ar', 'er', 'ir', 'or', 'ur', 'as', 'es', 'is', 'os', 'us', 'ah', 'eh', 'ih', 'oh', 'uh', 'ai', 'ti', 'si', 'ni', 'mi', 'li', 'ki', 'gi', 'di', 'bi', 'pi'].includes(twoChars)) {
             return twoChars
           }
         }
         
         // Fallback to last 2 characters
-        return lastWord.slice(-2)
+        return actualLastWord.slice(-2)
       }
       
       const rhyme1 = getRhymeEnding(lines[0])
