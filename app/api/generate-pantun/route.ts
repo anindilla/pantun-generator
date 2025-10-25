@@ -207,7 +207,7 @@ Segera ke warung untuk makan.`
       }
       
       // More lenient validation - allow some suspicious words but not too many
-      const isValid = suspiciousWords <= 1 // Allow 1 suspicious word
+      const isValid = suspiciousWords <= 2 // Allow 2 suspicious words
       if (!isValid) {
         console.log(`Word validation failed. Made-up words: ${madeUpWords.join(', ')}`)
       }
@@ -528,11 +528,12 @@ Segera ke warung untuk makan.`
         
         console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}, Syllables=${syllablesValid}, Mood=${moodValid}`)
         
-        // For mood mode, require all validations. For other modes, be more lenient
+        // For mood mode, require all validations. For other modes, be much more lenient
         const isFullyValid = rhymeValid && wordsValid && semanticsValid && syllablesValid && moodValid
         const isPartiallyValid = rhymeValid && wordsValid && (mode !== 'mood' || moodValid)
+        const isBasicValid = rhymeValid && (mode !== 'mood' || moodValid) // Just rhyme + mood for mood mode
         
-        if (isFullyValid || (isPartiallyValid && attempts >= 3)) {
+        if (isFullyValid || (isPartiallyValid && attempts >= 2) || (isBasicValid && attempts >= 3)) {
           console.log('Validation passed!')
           break
         } else if (attempts < maxAttempts) {

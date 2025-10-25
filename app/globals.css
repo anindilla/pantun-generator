@@ -259,6 +259,16 @@
       padding: 1rem 1.5rem;
     }
   }
+  
+  .footer-with-sticky {
+    padding-bottom: calc(0.75rem + 80px);
+  }
+  
+  @media (min-width: 640px) {
+    .footer-with-sticky {
+      padding-bottom: calc(1rem + 80px);
+    }
+  }
 }
 
 @layer utilities {

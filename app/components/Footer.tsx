@@ -2,7 +2,7 @@ import React from 'react'
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="sticky bottom-0 w-full py-6 sm:py-8 px-4 text-center bg-white/95 backdrop-blur-sm border-t border-gray-200">
+    <footer className="sticky bottom-0 w-full py-6 sm:py-8 px-4 text-center bg-white/95 backdrop-blur-sm border-t border-gray-200 footer-with-sticky">
       <p className="text-sm sm:text-base text-gray-600 font-medium">
         Vibe-coded by{' '}
         <a 
