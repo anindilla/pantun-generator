@@ -201,15 +201,19 @@ STUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
       
       case 'continue':
         // Only support 1-line input for continue mode
-        userPrompt = `Complete this pantun by adding 3 more lines after the given first line:
+        userPrompt = `You must complete this pantun by adding 3 more lines after the given first line.
 
-${input}
-[Add line 2 here]
-[Add line 3 here - must rhyme with line 1]
-[Add line 4 here - must rhyme with line 2]
+START with this exact line: "${input}"
 
-The first line is: "${input}"
-You must start with this exact line and add 3 more lines.`
+Then add 3 more lines to complete the pantun.
+
+The complete pantun should be:
+Line 1: "${input}"
+Line 2: [add here]
+Line 3: [add here - must rhyme with line 1]
+Line 4: [add here - must rhyme with line 2]
+
+You MUST start with the exact line provided and add 3 more lines.`
         break
       
       case 'mood':
