@@ -19,24 +19,33 @@ STRUKTUR PANTUN:
 - Baris 3-4: ISI (pesan/nasihat yang bermakna)
 - Rima: a-b-a-b (baris 1 & 3, baris 2 & 4)
 
-CONTOH BENAR:
+CONTOH BENAR DENGAN RIMA YANG TEPAT:
 "Jalan-jalan ke kota Blitar
 Jangan lupa beli sukun
 Jika kamu ingin pintar
 Belajarlah dengan tekun"
+→ Rima: Blitar/pintar (ar-ar), sukun/tekun (un-un)
 
 "Pisang emas dibawa berlayar
 Masak sebiji di atas peti
 Hutang emas boleh dibayar
 Hutang budi dibawa mati"
+→ Rima: berlayar/dibayar (ar-ar), peti/mati (i-i)
 
 "Ada ubi ada talas
 Ada budi ada balas
 Sebab pulut santan binasa
 Sebab mulut badan merana"
+→ Rima: talas/binasa (as-a), balas/merana (as-a)
+
+"Tumbuh merata pohon tebu
+Pergi ke pasar membeli daging
+Banyak harta miskin ilmu
+Bagai rumah tidak berdinding"
+→ Rima: tebu/ilmu (u-u), daging/berdinding (ing-ing)
 
 WAJIB:
-- Rima a-b-a-b sempurna
+- Rima a-b-a-b sempurna dengan bunyi yang sama
 - Sampiran dan isi TIDAK perlu berhubungan
 - Bahasa natural, bermakna
 - Format: Hanya pantun, tanpa penjelasan`
@@ -83,16 +92,27 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
         return NextResponse.json({ error: 'Mode tidak valid' }, { status: 400 })
     }
 
-    // Function to validate rhyme pattern (a-b-a-b)
+    // Function to validate rhyme pattern (a-b-a-b) with phonetic matching
     const validateRhyme = (pantun: string): boolean => {
-      const lines = pantun.split('\n').filter(line => line.trim())
+      const lines = pantun.split('\n').filter((line: string) => line.trim())
       if (lines.length !== 4) return false
       
       const getLastSyllable = (line: string): string => {
-        const words = line.trim().split(' ')
+        const cleaned = line.trim().replace(/[.,!?;:]$/, '')
+        const words = cleaned.split(' ')
         const lastWord = words[words.length - 1].toLowerCase()
-        // Simple rhyme detection - get last 2-3 characters
-        return lastWord.slice(-2)
+        
+        // Remove common suffixes that don't affect rhyme
+        const withoutSuffix = lastWord
+          .replace(/nya$/, '')
+          .replace(/lah$/, '')
+          .replace(/kah$/, '')
+          .replace(/kan$/, '')
+          .replace(/an$/, '')
+        
+        // Extract last syllable (consonant + vowel pattern)
+        const syllableMatch = withoutSuffix.match(/[^aiueo]*[aiueo]+[^aiueo]*$/)
+        return syllableMatch ? syllableMatch[0] : withoutSuffix.slice(-3)
       }
       
       const rhyme1 = getLastSyllable(lines[0])
@@ -100,13 +120,25 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
       const rhyme3 = getLastSyllable(lines[2])
       const rhyme4 = getLastSyllable(lines[3])
       
-      return rhyme1 === rhyme3 && rhyme2 === rhyme4 && rhyme1 !== rhyme2
+      // Log for debugging
+      console.log(`Rhyme validation: Line 1 (${rhyme1}) vs Line 3 (${rhyme3})`)
+      console.log(`Rhyme validation: Line 2 (${rhyme2}) vs Line 4 (${rhyme4})`)
+      
+      // Check for exact phonetic match
+      const isRhyme1 = rhyme1 === rhyme3 && rhyme1.length > 0
+      const isRhyme2 = rhyme2 === rhyme4 && rhyme2.length > 0
+      const isDifferent = rhyme1 !== rhyme2
+      
+      console.log(`Rhyme validation result: ${isRhyme1 && isRhyme2 && isDifferent}`)
+      
+      return isRhyme1 && isRhyme2 && isDifferent
     }
 
     // Function to generate pantun with retry logic
     const generatePantunWithRetry = async (attempt: number = 1): Promise<string> => {
-      const temperature = attempt === 1 ? 0.7 : attempt === 2 ? 0.8 : 0.9
-      const top_p = attempt === 1 ? 0.85 : attempt === 2 ? 0.9 : 0.95
+      // More conservative temperature progression for better structure
+      const temperature = attempt === 1 ? 0.7 : attempt === 2 ? 0.6 : 0.5
+      const top_p = attempt === 1 ? 0.85 : attempt === 2 ? 0.8 : 0.75
       
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -145,7 +177,7 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
     // Try to generate pantun with validation and retry
     let pantun = ''
     let attempts = 0
-    const maxAttempts = 3
+    const maxAttempts = 5
 
     while (attempts < maxAttempts) {
       attempts++
