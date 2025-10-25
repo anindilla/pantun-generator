@@ -60,6 +60,14 @@ export async function POST(request: NextRequest) {
 - DO NOT use words that don't exist in Indonesian language.
 - DO NOT combine random syllables to create fake words.
 - ONLY use real, common Indonesian words that people actually use.
+
+# CRITICAL RHYME REQUIREMENTS
+- Line 1 and Line 3 MUST end with EXACTLY the same sound/characters
+- Line 2 and Line 4 MUST end with EXACTLY the same sound/characters  
+- Line 1/3 and Line 2/4 must have DIFFERENT rhyme patterns
+- Examples: "ang" rhymes with "ang", "at" rhymes with "at", "ah" rhymes with "ah"
+- WRONG: "it" does NOT rhyme with "at" or "ah" or "an"
+- The rhyme pattern is MANDATORY - no exceptions!
 - Example of GOOD pantun with EXACT rhyme:
   Jalan-jalan ke kota Blitar,  (ends with "ar")
   Beli onde di pinggir kali.   (ends with "li")
@@ -411,7 +419,11 @@ Segera ke warung untuk makan.`
       const isRhyme2 = rhyme2 === rhyme4 && rhyme2.length >= 2
       const isDifferent = rhyme1 !== rhyme2
       
-      console.log(`Rhyme validation result: ${isRhyme1 && isRhyme2 && isDifferent}`)
+      console.log(`Rhyme validation details:`)
+      console.log(`- Line 1 & 3 match: ${isRhyme1} (${rhyme1} === ${rhyme3})`)
+      console.log(`- Line 2 & 4 match: ${isRhyme2} (${rhyme2} === ${rhyme4})`)
+      console.log(`- Different rhyme patterns: ${isDifferent} (${rhyme1} !== ${rhyme2})`)
+      console.log(`- Final result: ${isRhyme1 && isRhyme2 && isDifferent}`)
       
       return isRhyme1 && isRhyme2 && isDifferent
     }
@@ -528,7 +540,20 @@ Segera ke warung untuk makan.`
         
         console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}, Syllables=${syllablesValid}, Mood=${moodValid}`)
         
-        // For mood mode, require all validations. For other modes, be much more lenient
+        // RHYME VALIDATION IS MANDATORY - NO EXCEPTIONS
+        if (!rhymeValid) {
+          console.log(`Attempt ${attempts}: RHYME VALIDATION FAILED - This is mandatory!`)
+          if (attempts < maxAttempts) {
+            console.log(`Retrying due to rhyme failure...`)
+            continue
+          } else {
+            console.log('Max attempts reached, using fallback pantun')
+            pantun = getMoodFallbackPantun(mood || '')
+            break
+          }
+        }
+        
+        // For mood mode, require all validations. For other modes, be more lenient
         const isFullyValid = rhymeValid && wordsValid && semanticsValid && syllablesValid && moodValid
         const isPartiallyValid = rhymeValid && wordsValid && (mode !== 'mood' || moodValid)
         const isBasicValid = rhymeValid && (mode !== 'mood' || moodValid) // Just rhyme + mood for mood mode
@@ -537,7 +562,7 @@ Segera ke warung untuk makan.`
           console.log('Validation passed!')
           break
         } else if (attempts < maxAttempts) {
-          console.log(`Attempt ${attempts}: Validation failed, retrying...`)
+          console.log(`Attempt ${attempts}: Other validation failed, retrying...`)
           continue
         } else {
           console.log('Max attempts reached, using fallback pantun')
