@@ -80,16 +80,23 @@ Output pantun only. No extra text.`
         break
       
       case 'mood':
-        userPrompt = `Generate a pantun that DIRECTLY relates to this mood/feeling: "${mood}". 
+        userPrompt = `You MUST generate a pantun that is DIRECTLY and SPECIFICALLY about this mood: "${mood}"
 
-CRITICAL REQUIREMENTS:
-- The pantun content MUST be directly about the mood mentioned
-- If mood is "lapar" or "hungry", pantun should be about hunger, food, eating
-- If mood is "sedih" or "sad", pantun should be about sadness, tears, loneliness
-- If mood is "senang" or "happy", pantun should be about joy, celebration, happiness
-- Lines 1-2 = sampiran (imagery related to the mood)
-- Lines 3-4 = isi (directly expressing the mood/feeling)
-- Natural rhyme a-b-a-b with EXACT last 2 characters matching`
+STRICT REQUIREMENTS:
+- The pantun MUST contain words related to the mood
+- If mood contains "lapar" or "hungry", use words like: lapar, makan, perut, nasi, makanan, keroncongan
+- If mood contains "sedih" or "sad", use words like: sedih, menangis, air mata, pilu, duka, nestapa
+- If mood contains "senang" or "happy", use words like: senang, gembira, bahagia, ceria, riang
+- Lines 1-2 = sampiran (imagery that relates to the mood)
+- Lines 3-4 = isi (MUST directly mention the mood/feeling)
+- The pantun content MUST be obviously about the given mood
+- Natural rhyme a-b-a-b with EXACT last 2 characters matching
+
+Example for "lapar":
+Perut keroncongan tak tertahan,
+Aroma nasi gudeg menggiurkan.
+Lapar sekali ingin makan,
+Segera ke warung untuk makan.`
         break
       
       default:
@@ -180,6 +187,44 @@ CRITICAL REQUIREMENTS:
       }
       
       return true
+    }
+
+    // Function to validate mood correlation for mood mode
+    const validateMood = (pantun: string, mood: string): boolean => {
+      if (mode !== 'mood') return true // Skip validation for non-mood modes
+      
+      const pantunText = pantun.toLowerCase()
+      const moodLower = mood.toLowerCase()
+      
+      // Check for mood-specific keywords
+      const moodKeywords = {
+        'lapar': ['lapar', 'makan', 'perut', 'nasi', 'makanan', 'keroncongan', 'makan'],
+        'sedih': ['sedih', 'menangis', 'air mata', 'pilu', 'duka', 'nestapa', 'tangis'],
+        'senang': ['senang', 'gembira', 'bahagia', 'ceria', 'riang', 'suka'],
+        'marah': ['marah', 'kesal', 'geram', 'murka', 'dendam'],
+        'rindu': ['rindu', 'kangen', 'merindukan', 'ingin', 'kangen']
+      }
+      
+      // Find matching mood category
+      let expectedKeywords: string[] = []
+      for (const [moodKey, keywords] of Object.entries(moodKeywords)) {
+        if (moodLower.includes(moodKey)) {
+          expectedKeywords = keywords
+          break
+        }
+      }
+      
+      // If no specific mood found, check if mood words appear in pantun
+      if (expectedKeywords.length === 0) {
+        const moodWords = moodLower.split(' ').filter(word => word.length > 2)
+        return moodWords.some(word => pantunText.includes(word))
+      }
+      
+      // Check if any expected keywords appear in the pantun
+      const hasMoodKeywords = expectedKeywords.some(keyword => pantunText.includes(keyword))
+      
+      console.log(`Mood validation: mood="${mood}", hasKeywords=${hasMoodKeywords}`)
+      return hasMoodKeywords
     }
 
     // Function to validate rhyme pattern (a-b-a-b) with EXACT last 2 characters
@@ -277,15 +322,16 @@ CRITICAL REQUIREMENTS:
         try {
           pantun = await generatePantunWithRetry(attempts)
           
-          // Multi-stage validation
-          const rhymeValid = validateRhyme(pantun)
-          const wordsValid = validateWords(pantun)
-          const semanticsValid = validateSemantics(pantun)
-          const syllablesValid = validateSyllables(pantun) // NEW
-          
-          console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}, Syllables=${syllablesValid}`)
-          
-          if (rhymeValid && wordsValid && semanticsValid && syllablesValid) {
+        // Multi-stage validation
+        const rhymeValid = validateRhyme(pantun)
+        const wordsValid = validateWords(pantun)
+        const semanticsValid = validateSemantics(pantun)
+        const syllablesValid = validateSyllables(pantun)
+        const moodValid = validateMood(pantun, mood || '') // NEW
+        
+        console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}, Syllables=${syllablesValid}, Mood=${moodValid}`)
+        
+        if (rhymeValid && wordsValid && semanticsValid && syllablesValid && moodValid) {
             console.log('All validations passed!')
             break
           } else if (attempts < maxAttempts) {
