@@ -13,86 +13,48 @@ export async function POST(request: NextRequest) {
     console.log('Environment check passed, proceeding with API call...')
 
 
-    let systemPrompt = `Anda adalah ahli pantun tradisional Indonesia. Buat pantun dengan struktur yang BENAR:
+    let systemPrompt = `You are an Indonesian pantun generator. Follow these rules strictly:
 
-ATURAN KETAT - WAJIB DIPATUHI:
-- HANYA gunakan kata-kata Bahasa Indonesia yang BENAR dan UMUM
-- DILARANG membuat kata baru atau kata yang tidak ada
-- DILARANG menggunakan kata yang aneh atau tidak natural
-- Setiap baris harus BERMAKNA dan masuk akal
-- Jika tidak bisa menemukan rima yang natural, coba kata lain
-- Gunakan kata-kata yang sudah dikenal masyarakat Indonesia
+# STRUCTURE
+- Always write exactly 4 lines.
+- Follow rhyme pattern **a-b-a-b**.
+- Each line should have 8–12 syllables max.
+- Two first lines = **sampiran** (intro or setup, usually about nature, daily life, or simple imagery).
+- Two last lines = **isi** (the real meaning, emotion, or message).
+- Sampiran and isi must sound naturally connected, not random.
 
-STRUKTUR PANTUN:
-- Baris 1-2: SAMPIRAN (deskripsi alam/kehidupan, TIDAK perlu berhubungan dengan pesan)
-- Baris 3-4: ISI (pesan/nasihat yang bermakna)
-- Rima: a-b-a-b (baris 1 & 3, baris 2 & 4)
+# STYLE
+- Use natural, poetic, and fluent Indonesian.
+- Avoid forced rhymes or weird word choices.
+- Avoid any English words, slang, or unnatural mix of languages.
+- DO NOT hallucinate or generate nonsense phrases.
+- DO NOT make fantasy or surreal scenes (no dragons, planets, time travel, etc).
+- Keep it grounded in real life, human emotion, and local imagery.
+- Tone can be playful, romantic, funny, or emotional depending on request.
 
-CONTOH BENAR DENGAN RIMA YANG TEPAT:
-"Berenang jauh para ikan
-Mereka bebas hatinya senang
-Badan kurus kurang makan
-Kalau ditiup goyang-goyang"
-→ Rima: ikan/makan (an-an), senang/goyang (ang-ang)
+# STRICT GUIDELINES
+- DO NOT break rhyme pattern (must be a-b-a-b).
+- DO NOT write less or more than 4 lines.
+- DO NOT explain or comment—output pantun only.
+- DO NOT repeat same rhyme endings for all lines.
+- DO NOT force words just to make it rhyme. If it sounds unnatural, change it.
+- Example of GOOD pantun:
+  Jalan-jalan ke kota Blitar,  
+  Beli onde di pinggir kali.  
+  Kalau hati sedang bergetar,  
+  Tandanya rindu mulai bersemi.  
 
-"Jalan-jalan ke pinggir empang
-Nemu katak di pinggir empang
-Hati siapa tak bimbang
-Kamu botak minta dikepang"
-→ Rima: empang/bimbang (ang-ang), empang/dikepang (ang-ang)
-
-"Tetangga baru namanya Rahmat
-Punya istri namanya Cua
-Kakek cerita terlalu semangat
-Gigi palsunya copot semua"
-→ Rima: Rahmat/semangat (at-at), Cua/semua (a-a)
-
-"Ke SPBU membeli bensin
-Bensin bagus di Pangandaran
-Menahan diri agar tak bersin
-Malah kentut tak tertahankan"
-→ Rima: bensin/bersin (in-in), Pangandaran/tertahankan (an-an)
-
-"Beli sabun di sebuah warung
-Warung baru milik Sukiran
-Diam-diam menutup hidung
-Bau kentut penuhi ruangan"
-→ Rima: warung/Sukiran (ung-ung), hidung/ruangan (ung-an)
-
-"Tumbuh ilalang di semak-semak
-Semak-semak lalu dibersihkan
-The power of emak-emak
-Sein ke kiri belok ke kanan"
-→ Rima: semak/dibersihkan (ak-an), emak/kanan (ak-an)
-
-CONTOH SALAH (JANGAN BUAT SEPERTI INI):
-❌ "Pergi ke pasar membeli sayur"
-   "Sayur kangkung MENYAYURKAN" ← SALAH! kata tidak ada
-   "Jangan suka menunda-nunda"
-   "Nanti menyesal MENYAYUR-SAYUR" ← SALAH! tidak masuk akal
-
-❌ "Jalan-jalan ke pantai barat"
-   "Barat timur MEMBARATKAN" ← SALAH! kata tidak natural
-   "Hidup ini penuh arti"
-   "Jaga hati MEMBARATKAN" ← SALAH! tidak bermakna
-
-❌ "Bunga mawar di taman"
-   "Taman bunga MEMBUNGAKAN" ← SALAH! kata tidak ada
-   "Cinta itu suci"
-   "Jangan MEMBUNGAKAN" ← SALAH! tidak masuk akal
-
-WAJIB:
-- Rima a-b-a-b sempurna dengan bunyi yang sama (contoh: -ing dengan -ing, -ar dengan -ar, -an dengan -an)
-- Sampiran dan isi TIDAK perlu berhubungan
-- Bahasa natural, bermakna
-- Pastikan kata terakhir setiap baris memiliki pola bunyi yang sama
-- Format: Hanya pantun, tanpa penjelasan`
+Remember:
+✅ Simple, rhythmic, emotionally natural.  
+❌ No weird logic. No filler. No forced rhyme.  
+❌ Never break the 4-line, a-b-a-b format.  
+Output pantun only. No extra text.`
 
     let userPrompt = ''
 
     switch (mode) {
       case 'random':
-        userPrompt = 'Buat pantun dengan tema acak. Pastikan baris 1-2 adalah sampiran dan baris 3-4 adalah isi yang bermakna.'
+        userPrompt = 'Generate a random pantun with natural rhyme a-b-a-b. Keep it simple and emotionally natural.'
         break
       
       case 'continue':
@@ -100,30 +62,18 @@ WAJIB:
         const lineCount = inputLines.length
         
         if (lineCount === 1) {
-          userPrompt = `Lengkapi baris pertama ini menjadi pantun 4 baris penuh:
-"${input}"
-
-WAJIB: Buat 3 baris tambahan dengan rima a-b-a-b. Baris 2 adalah sampiran, baris 3-4 adalah isi yang bermakna.`
+          userPrompt = `Complete this first line into a full 4-line pantun:\n"${input}"\n\nMaintain a-b-a-b rhyme. Lines 1-2 = sampiran, lines 3-4 = isi.`
         } else if (lineCount === 2) {
-          userPrompt = `Lengkapi sampiran ini menjadi pantun 4 baris penuh:
-"${input}"
-
-WAJIB: Tambahkan 2 baris isi yang bermakna dengan rima a-b-a-b sempurna.`
+          userPrompt = `Complete this sampiran into a full 4-line pantun:\n"${input}"\n\nAdd 2 lines of isi with a-b-a-b rhyme.`
         } else if (lineCount === 3) {
-          userPrompt = `Lengkapi pantun ini dengan baris terakhir:
-"${input}"
-
-WAJIB: Tambahkan 1 baris terakhir yang sesuai dengan rima a-b-a-b.`
+          userPrompt = `Complete this pantun with the final line:\n"${input}"\n\nMaintain a-b-a-b rhyme pattern.`
         } else {
-          userPrompt = `Perbaiki pantun ini agar memiliki struktur yang benar:
-"${input}"
-
-WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
+          userPrompt = `Fix this pantun to have correct structure:\n"${input}"\n\nEnsure 4 lines, a-b-a-b rhyme, lines 1-2 sampiran, lines 3-4 isi.`
         }
         break
       
       case 'mood':
-        userPrompt = `Buat pantun tentang "${mood}". Baris 1-2 sampiran, baris 3-4 isi yang sesuai dengan mood tersebut.`
+        userPrompt = `Generate a pantun reflecting this mood: "${mood}". Lines 1-2 = sampiran (simple imagery), lines 3-4 = isi (emotion/message). Natural rhyme a-b-a-b.`
         break
       
       default:
@@ -189,6 +139,31 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
       })
       
       return !hasRepetitiveWords
+    }
+
+    // Function to count syllables in Indonesian (approximate)
+    const countSyllables = (word: string): number => {
+      // Indonesian syllables are typically vowel-based
+      const vowels = word.match(/[aiueo]/gi)
+      return vowels ? vowels.length : 0
+    }
+
+    const validateSyllables = (pantun: string): boolean => {
+      const lines = pantun.split('\n').filter((line: string) => line.trim())
+      if (lines.length !== 4) return false
+      
+      for (const line of lines) {
+        const words = line.trim().replace(/[.,!?;:]$/, '').split(/\s+/)
+        const syllableCount = words.reduce((sum, word) => sum + countSyllables(word), 0)
+        
+        // Allow 8-12 syllables per line (with some flexibility 7-14)
+        if (syllableCount < 7 || syllableCount > 14) {
+          console.log(`Line syllable count out of range: ${syllableCount} - "${line}"`)
+          return false
+        }
+      }
+      
+      return true
     }
 
     // Function to validate rhyme pattern (a-b-a-b) with proper Indonesian phonetic matching
@@ -273,9 +248,9 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
 
     // Function to generate pantun with retry logic
     const generatePantunWithRetry = async (attempt: number = 1): Promise<string> => {
-      // More conservative temperature progression for better quality
-      const temperature = attempt === 1 ? 0.5 : attempt === 2 ? 0.4 : 0.3
-      const top_p = attempt === 1 ? 0.7 : attempt === 2 ? 0.65 : 0.6
+      // More conservative parameters for natural, high-quality output
+      const temperature = attempt === 1 ? 0.7 : attempt === 2 ? 0.6 : 0.5
+      const top_p = attempt === 1 ? 0.85 : attempt === 2 ? 0.8 : 0.75
       
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -289,11 +264,11 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
           ],
-          max_tokens: 150,
+          max_tokens: 200, // Increased from 150 for more flexibility
           temperature,
           top_p,
-          frequency_penalty: 0.3,
-          presence_penalty: 0.2,
+          frequency_penalty: 0.5, // Increased from 0.3 to reduce repetition
+          presence_penalty: 0.3,  // Increased from 0.2 for more variety
         }),
       })
 
@@ -325,7 +300,7 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
     // Try to generate pantun with validation and retry
     let pantun = ''
     let attempts = 0
-    const maxAttempts = 3 // Reduced attempts for faster fallback
+    const maxAttempts = 5 // Increased from 3 for better quality assurance
 
     try {
       while (attempts < maxAttempts) {
@@ -337,10 +312,11 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
           const rhymeValid = validateRhyme(pantun)
           const wordsValid = validateWords(pantun)
           const semanticsValid = validateSemantics(pantun)
+          const syllablesValid = validateSyllables(pantun) // NEW
           
-          console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}`)
+          console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}, Syllables=${syllablesValid}`)
           
-          if (rhymeValid && wordsValid && semanticsValid) {
+          if (rhymeValid && wordsValid && semanticsValid && syllablesValid) {
             console.log('All validations passed!')
             break
           } else if (attempts < maxAttempts) {
