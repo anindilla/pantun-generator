@@ -6,19 +6,25 @@ export const trackEvent = (eventName: string, params?: any) => {
       window.gtag('event', eventName, params)
     }
     
-    // Server-side tracking
-    fetch('/api/analytics/track', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        event_type: eventName,
-        event_data: params
+    // Server-side tracking (optional, don't break if it fails)
+    try {
+      fetch('/api/analytics/track', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event_type: eventName,
+          event_data: params
+        })
+      }).catch(error => {
+        // Silently fail - analytics is optional
+        console.log('Analytics tracking failed (optional):', error.message)
       })
-    }).catch(error => {
-      console.error('Error tracking event:', error)
-    })
+    } catch (error) {
+      // Silently fail - analytics is optional
+      console.log('Analytics tracking failed (optional):', error)
+    }
   }
 }
 

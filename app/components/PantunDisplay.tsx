@@ -1,26 +1,23 @@
 import React, { useState } from 'react'
 import { Card } from './Card'
 import { Button } from './Button'
-import { FiCopy, FiCheck, FiRefreshCw, FiShare2 } from 'react-icons/fi'
-import { trackPantunCopied, trackPantunShared } from '@/lib/analytics'
+import { FiCopy, FiCheck, FiRefreshCw } from 'react-icons/fi'
+import { trackPantunCopied } from '@/lib/analytics'
 
 interface PantunDisplayProps {
   pantun: string
   onGenerateNew: () => void
   isLoading?: boolean
   mode?: string | null
-  shareUrl?: string
 }
 
 export const PantunDisplay: React.FC<PantunDisplayProps> = ({
   pantun,
   onGenerateNew,
   isLoading = false,
-  mode = 'unknown',
-  shareUrl
+  mode = 'unknown'
 }) => {
   const [copied, setCopied] = useState(false)
-  const [shared, setShared] = useState(false)
 
   const handleCopy = async () => {
     try {
@@ -34,27 +31,6 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
     }
   }
 
-  const handleShare = async () => {
-    try {
-      const shareText = `${pantun}\n\nBuat pantun Anda sendiri di pantun-generator.vercel.app`
-      
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Pantun Generator',
-          text: shareText,
-          url: window.location.origin
-        })
-        trackPantunShared(mode || 'unknown', 'native_share')
-      } else {
-        await navigator.clipboard.writeText(shareText)
-        trackPantunShared(mode || 'unknown', 'copy_text')
-        setShared(true)
-        setTimeout(() => setShared(false), 2000)
-      }
-    } catch (err) {
-      console.error('Failed to share: ', err)
-    }
-  }
 
   const formatPantun = (text: string) => {
     return text.split('\n').map((line, index) => (
@@ -95,24 +71,6 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
           )}
         </Button>
 
-        <Button
-          onClick={handleShare}
-          variant="secondary"
-          size="sm"
-          className="flex items-center justify-center gap-2 min-w-[100px] sm:min-w-[120px]"
-        >
-          {shared ? (
-            <>
-              <FiCheck className="w-4 h-4" />
-              Link Tersalin!
-            </>
-          ) : (
-            <>
-              <FiShare2 className="w-4 h-4" />
-              Bagikan
-            </>
-          )}
-        </Button>
         
         <Button
           onClick={onGenerateNew}

@@ -19,6 +19,12 @@ export interface AnalyticsEvent {
 // Initialize database tables
 export async function initializeDatabase() {
   try {
+    // Check if database connection is available
+    if (!process.env.POSTGRES_URL) {
+      console.log('Database not configured, skipping initialization')
+      return
+    }
+
     // Create pantuns table
     await sql`
       CREATE TABLE IF NOT EXISTS pantuns (
@@ -43,14 +49,18 @@ export async function initializeDatabase() {
 
     console.log('Database tables initialized successfully')
   } catch (error) {
-    console.error('Error initializing database:', error)
-    throw error
+    console.log('Database initialization failed (optional):', error instanceof Error ? error.message : String(error))
+    // Don't throw error - database is optional
   }
 }
 
 // Save pantun to database
 export async function savePantun(slug: string, content: string, mode: string): Promise<Pantun> {
   try {
+    if (!process.env.POSTGRES_URL) {
+      throw new Error('Database not configured')
+    }
+
     const result = await sql`
       INSERT INTO pantuns (slug, content, mode)
       VALUES (${slug}, ${content}, ${mode})
@@ -58,7 +68,7 @@ export async function savePantun(slug: string, content: string, mode: string): P
     `
     return result.rows[0] as Pantun
   } catch (error) {
-    console.error('Error saving pantun:', error)
+    console.log('Database save failed (optional):', error instanceof Error ? error.message : String(error))
     throw error
   }
 }
@@ -66,46 +76,60 @@ export async function savePantun(slug: string, content: string, mode: string): P
 // Get pantun by slug
 export async function getPantunBySlug(slug: string): Promise<Pantun | null> {
   try {
+    if (!process.env.POSTGRES_URL) {
+      return null
+    }
+
     const result = await sql`
       SELECT * FROM pantuns WHERE slug = ${slug}
     `
     return result.rows[0] as Pantun || null
   } catch (error) {
-    console.error('Error getting pantun:', error)
-    throw error
+    console.log('Database get failed (optional):', error instanceof Error ? error.message : String(error))
+    return null
   }
 }
 
 // Increment view count
 export async function incrementViewCount(slug: string): Promise<void> {
   try {
+    if (!process.env.POSTGRES_URL) {
+      return
+    }
+
     await sql`
       UPDATE pantuns 
       SET view_count = view_count + 1 
       WHERE slug = ${slug}
     `
   } catch (error) {
-    console.error('Error incrementing view count:', error)
-    throw error
+    console.log('Database increment failed (optional):', error instanceof Error ? error.message : String(error))
   }
 }
 
 // Save analytics event
 export async function saveAnalyticsEvent(eventType: string, eventData: any): Promise<void> {
   try {
+    if (!process.env.POSTGRES_URL) {
+      return
+    }
+
     await sql`
       INSERT INTO analytics_events (event_type, event_data)
       VALUES (${eventType}, ${JSON.stringify(eventData)})
     `
   } catch (error) {
-    console.error('Error saving analytics event:', error)
-    throw error
+    console.log('Analytics save failed (optional):', error instanceof Error ? error.message : String(error))
   }
 }
 
 // Get analytics data
 export async function getAnalyticsData() {
   try {
+    if (!process.env.POSTGRES_URL) {
+      return []
+    }
+
     const events = await sql`
       SELECT event_type, COUNT(*) as count, 
              DATE_TRUNC('day', created_at) as date
@@ -115,7 +139,7 @@ export async function getAnalyticsData() {
     `
     return events.rows
   } catch (error) {
-    console.error('Error getting analytics data:', error)
-    throw error
+    console.log('Analytics data failed (optional):', error instanceof Error ? error.message : String(error))
+    return []
   }
 }
