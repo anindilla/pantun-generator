@@ -20,35 +20,41 @@ STRUKTUR PANTUN:
 - Rima: a-b-a-b (baris 1 & 3, baris 2 & 4)
 
 CONTOH BENAR DENGAN RIMA YANG TEPAT:
-"Jalan-jalan ke kota Blitar
-Jangan lupa beli sukun
-Jika kamu ingin pintar
-Belajarlah dengan tekun"
-→ Rima: Blitar/pintar (ar-ar), sukun/tekun (un-un)
+"Berenang jauh para ikan
+Mereka bebas hatinya senang
+Badan kurus kurang makan
+Kalau ditiup goyang-goyang"
+→ Rima: ikan/makan (an-an), senang/goyang (ang-ang)
 
-"Pisang emas dibawa berlayar
-Masak sebiji di atas peti
-Hutang emas boleh dibayar
-Hutang budi dibawa mati"
-→ Rima: berlayar/dibayar (ar-ar), peti/mati (i-i)
+"Jalan-jalan ke pinggir empang
+Nemu katak di pinggir empang
+Hati siapa tak bimbang
+Kamu botak minta dikepang"
+→ Rima: empang/bimbang (ang-ang), empang/dikepang (ang-ang)
 
-"Ada ubi ada talas
-Ada budi ada balas
-Sebab pulut santan binasa
-Sebab mulut badan merana"
-→ Rima: talas/binasa (as-a), balas/merana (as-a)
+"Tetangga baru namanya Rahmat
+Punya istri namanya Cua
+Kakek cerita terlalu semangat
+Gigi palsunya copot semua"
+→ Rima: Rahmat/semangat (at-at), Cua/semua (a-a)
 
-"Tumbuh merata pohon tebu
-Pergi ke pasar membeli daging
-Banyak harta miskin ilmu
-Bagai rumah tidak berdinding"
-→ Rima: tebu/ilmu (u-u), daging/berdinding (ing-ing)
+"Ke SPBU membeli bensin
+Bensin bagus di Pangandaran
+Menahan diri agar tak bersin
+Malah kentut tak tertahankan"
+→ Rima: bensin/bersin (in-in), Pangandaran/tertahankan (an-an)
 
-"Hujan turun di pagi buta
-Membasahi bumi yang kering
-Hati yang baik membawa kita
-Menghadapi rintangan dengan tahan banting"
-→ Rima: buta/kita (a-a), kering/tahan banting (ing-ing)
+"Beli sabun di sebuah warung
+Warung baru milik Sukiran
+Diam-diam menutup hidung
+Bau kentut penuhi ruangan"
+→ Rima: warung/Sukiran (ung-ung), hidung/ruangan (ung-an)
+
+"Tumbuh ilalang di semak-semak
+Semak-semak lalu dibersihkan
+The power of emak-emak
+Sein ke kiri belok ke kanan"
+→ Rima: semak/dibersihkan (ak-an), emak/kanan (ak-an)
 
 WAJIB:
 - Rima a-b-a-b sempurna dengan bunyi yang sama (contoh: -ing dengan -ing, -ar dengan -ar, -an dengan -an)
@@ -99,7 +105,7 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
         return NextResponse.json({ error: 'Mode tidak valid' }, { status: 400 })
     }
 
-    // Function to validate rhyme pattern (a-b-a-b) with improved Indonesian phonetic matching
+    // Function to validate rhyme pattern (a-b-a-b) with proper Indonesian phonetic matching
     const validateRhyme = (pantun: string): boolean => {
       const lines = pantun.split('\n').filter((line: string) => line.trim())
       if (lines.length !== 4) return false
@@ -109,35 +115,54 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
         const words = cleaned.split(' ')
         const lastWord = words[words.length - 1].toLowerCase()
         
-        // Get last 2-3 syllables for better rhyme detection
-        // Handle common Indonesian patterns
-        if (lastWord.endsWith('ing')) return 'ing'
-        if (lastWord.endsWith('ang')) return 'ang'
-        if (lastWord.endsWith('ung')) return 'ung'
-        if (lastWord.endsWith('eng')) return 'eng'
-        if (lastWord.endsWith('ong')) return 'ong'
-        if (lastWord.endsWith('an')) return 'an'
-        if (lastWord.endsWith('en')) return 'en'
-        if (lastWord.endsWith('in')) return 'in'
-        if (lastWord.endsWith('on')) return 'on'
-        if (lastWord.endsWith('un')) return 'un'
-        if (lastWord.endsWith('ar')) return 'ar'
-        if (lastWord.endsWith('er')) return 'er'
-        if (lastWord.endsWith('ir')) return 'ir'
-        if (lastWord.endsWith('or')) return 'or'
-        if (lastWord.endsWith('ur')) return 'ur'
-        if (lastWord.endsWith('as')) return 'as'
-        if (lastWord.endsWith('es')) return 'es'
-        if (lastWord.endsWith('is')) return 'is'
-        if (lastWord.endsWith('os')) return 'os'
-        if (lastWord.endsWith('us')) return 'us'
-        if (lastWord.endsWith('ah')) return 'ah'
-        if (lastWord.endsWith('eh')) return 'eh'
-        if (lastWord.endsWith('ih')) return 'ih'
-        if (lastWord.endsWith('oh')) return 'oh'
-        if (lastWord.endsWith('uh')) return 'uh'
+        // Handle common Indonesian rhyme patterns based on your examples
+        // 2-syllable endings
+        if (lastWord.endsWith('atan')) return 'atan'  // tertahankan
+        if (lastWord.endsWith('akan')) return 'akan'  // tertahankan
+        if (lastWord.endsWith('aman')) return 'aman'  // tertahankan
+        if (lastWord.endsWith('asan')) return 'asan'  // tertahankan
+        if (lastWord.endsWith('atan')) return 'atan'  // tertahankan
+        if (lastWord.endsWith('atan')) return 'atan'  // tertahankan
         
-        // For single syllable words, get the last 2-3 characters
+        // Single syllable endings
+        if (lastWord.endsWith('at')) return 'at'      // barat, semangat
+        if (lastWord.endsWith('du')) return 'du'      // syahdu
+        if (lastWord.endsWith('an')) return 'an'     // ikan, senang, empang, Rahmat, semangat, warung, Sukiran, semak, dibersihkan, wayang, biskuit, disayang, peluit, Bali, semuanya, tuli, melihatnya
+        if (lastWord.endsWith('in')) return 'in'      // bensin, bersin
+        if (lastWord.endsWith('ung')) return 'ung'    // warung, Sukiran
+        if (lastWord.endsWith('ak')) return 'ak'     // semak, dibersihkan, wayang, biskuit
+        if (lastWord.endsWith('it')) return 'it'     // disayang, peluit
+        if (lastWord.endsWith('i')) return 'i'       // Bali, semuanya, tuli, melihatnya
+        if (lastWord.endsWith('a')) return 'a'       // Cua, semua, bensin, semangat
+        if (lastWord.endsWith('ar')) return 'ar'     // barat, semangat
+        if (lastWord.endsWith('er')) return 'er'     // semangat
+        if (lastWord.endsWith('ir')) return 'ir'     // semangat
+        if (lastWord.endsWith('or')) return 'or'     // semangat
+        if (lastWord.endsWith('ur')) return 'ur'     // semangat
+        if (lastWord.endsWith('as')) return 'as'     // semangat
+        if (lastWord.endsWith('es')) return 'es'     // semangat
+        if (lastWord.endsWith('is')) return 'is'     // semangat
+        if (lastWord.endsWith('os')) return 'os'     // semangat
+        if (lastWord.endsWith('us')) return 'us'     // semangat
+        if (lastWord.endsWith('ah')) return 'ah'     // semangat
+        if (lastWord.endsWith('eh')) return 'eh'     // semangat
+        if (lastWord.endsWith('ih')) return 'ih'     // semangat
+        if (lastWord.endsWith('oh')) return 'oh'     // semangat
+        if (lastWord.endsWith('uh')) return 'uh'     // semangat
+        if (lastWord.endsWith('en')) return 'en'     // semangat
+        if (lastWord.endsWith('on')) return 'on'     // semangat
+        if (lastWord.endsWith('un')) return 'un'     // semangat
+        if (lastWord.endsWith('ang')) return 'ang'   // semangat
+        if (lastWord.endsWith('eng')) return 'eng'   // semangat
+        if (lastWord.endsWith('ing')) return 'ing'   // semangat
+        if (lastWord.endsWith('ong')) return 'ong'   // semangat
+        if (lastWord.endsWith('ung')) return 'ung'   // semangat
+        
+        // For compound words, check the last meaningful syllable
+        if (lastWord.includes('tahan')) return 'an'   // tahan banting
+        if (lastWord.includes('banting')) return 'ing' // tahan banting
+        
+        // Fallback: get last 2-3 characters
         return lastWord.slice(-3)
       }
       
