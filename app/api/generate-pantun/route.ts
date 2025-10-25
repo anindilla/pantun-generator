@@ -365,7 +365,7 @@ Segera ke warung untuk makan.`
       return hasMoodKeywords
     }
 
-    // Function to validate rhyme pattern (a-b-a-b) with flexible 2-3 character endings
+    // Function to validate rhyme pattern (a-b-a-b) with EXACT character matching
     const validateRhyme = (pantun: string): boolean => {
       const lines = pantun.split('\n').filter((line: string) => line.trim())
       if (lines.length !== 4) return false
@@ -375,15 +375,16 @@ Segera ke warung untuk makan.`
         const words = cleaned.split(' ')
         const lastWord = words[words.length - 1].toLowerCase()
         
-        // Try 3 characters first, then 2 characters
+        // Try 3 characters first for common Indonesian endings
         if (lastWord.length >= 3) {
           const threeChars = lastWord.slice(-3)
           // Check for common Indonesian 3-character endings
-          if (['ang', 'ung', 'ing', 'ong', 'eng', 'ing'].includes(threeChars)) {
+          if (['ang', 'ung', 'ing', 'ong', 'eng'].includes(threeChars)) {
             return threeChars
           }
         }
         
+        // Try 2 characters for shorter endings
         if (lastWord.length >= 2) {
           const twoChars = lastWord.slice(-2)
           // Check for common Indonesian 2-character endings
@@ -405,7 +406,7 @@ Segera ke warung untuk makan.`
       console.log(`Rhyme validation: Line 1 (${rhyme1}) vs Line 3 (${rhyme3})`)
       console.log(`Rhyme validation: Line 2 (${rhyme2}) vs Line 4 (${rhyme4})`)
       
-      // Check for EXACT character match (flexible length)
+      // Check for EXACT character match - must be identical
       const isRhyme1 = rhyme1 === rhyme3 && rhyme1.length >= 2
       const isRhyme2 = rhyme2 === rhyme4 && rhyme2.length >= 2
       const isDifferent = rhyme1 !== rhyme2
