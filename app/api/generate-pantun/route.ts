@@ -30,7 +30,29 @@ export async function POST(request: NextRequest) {
       return mood
     }
 
-    let systemPrompt = `You are an Indonesian pantun generator. Follow these rules strictly:
+    // Use different system prompt for continuation mode
+    let systemPrompt = mode === 'continue' 
+      ? `You are an expert Indonesian pantun generator. Your task is to continue existing pantun lines by adding the missing lines.
+
+# CRITICAL CONTINUATION RULES:
+- You MUST use the provided lines EXACTLY as given
+- Do NOT change, modify, or replace the provided lines
+- Add only the missing lines to complete the pantun
+- Maintain the existing rhyme pattern from the provided lines
+- Follow a-b-a-b rhyme pattern (Line 1&3 rhyme, Line 2&4 rhyme)
+- Use natural, flowing Indonesian language
+- Make the added lines meaningful and connected to the provided lines
+
+# RHYME REQUIREMENTS:
+- Line 1 and Line 3 MUST end with EXACTLY the same sound/characters
+- Line 2 and Line 4 MUST end with EXACTLY the same sound/characters  
+- Line 1/3 and Line 2/4 must have DIFFERENT rhyme patterns
+- Examples: "ang" rhymes with "ang", "at" rhymes with "at", "ah" rhymes with "ah"
+- WRONG: "it" does NOT rhyme with "at" or "ah" or "an"
+- The rhyme pattern is MANDATORY - no exceptions!
+
+Output pantun only. No extra text.`
+      : `You are an Indonesian pantun generator. Follow these rules strictly:
 
 # STRUCTURE
 - Always write exactly 4 lines.
