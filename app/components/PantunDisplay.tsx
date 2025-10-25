@@ -35,21 +35,22 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
   }
 
   return (
-    <div className="modern-card p-6 text-center">
-      <div className="mb-4">
-        <h3 className="text-lg font-bold text-black mb-3">
+    <div className="modern-card p-4 sm:p-6 text-center">
+      <div className="mb-3 sm:mb-4">
+        <h3 className="text-base sm:text-lg font-bold text-black mb-2 sm:mb-3">
           Pantun Anda
         </h3>
-        <div className="pantun-display bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <div className="pantun-display bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
           {formatPantun(pantun)}
         </div>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
         <Button
           onClick={handleCopy}
           variant="secondary"
-          className="flex items-center justify-center gap-2 min-w-[120px]"
+          size="sm"
+          className="flex items-center justify-center gap-2 min-w-[100px] sm:min-w-[120px]"
         >
           {copied ? (
             <>
@@ -67,8 +68,9 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
         <Button
           onClick={onGenerateNew}
           variant="accent"
+          size="sm"
           disabled={isLoading}
-          className="flex items-center justify-center gap-2 min-w-[120px]"
+          className="flex items-center justify-center gap-2 min-w-[100px] sm:min-w-[120px]"
         >
           {isLoading ? (
             <>

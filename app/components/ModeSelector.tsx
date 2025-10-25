@@ -33,21 +33,21 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
       {modes.map((mode) => (
         <div
           key={mode.id}
           className={`mode-card ${selectedMode === mode.id ? 'selected' : ''}`}
           onClick={() => onModeSelect(mode.id)}
         >
-          <div className="p-4 text-center">
-            <div className="text-3xl mb-3">
+          <div className="p-3 sm:p-4 text-center">
+            <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">
               {mode.icon}
             </div>
-            <h3 className="text-lg font-bold text-black mb-2">
+            <h3 className="text-base sm:text-lg font-bold text-black mb-1 sm:mb-2">
               {mode.title}
             </h3>
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-xs sm:text-sm text-gray-600 font-medium leading-tight">
               {mode.description}
             </p>
           </div>

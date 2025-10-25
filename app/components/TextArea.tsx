@@ -22,7 +22,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-semibold text-black mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-black mb-1.5 sm:mb-2">
           {label}
         </label>
       )}
@@ -32,7 +32,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         placeholder={placeholder}
         rows={rows}
         disabled={disabled}
-        className={`input-field ${className}`}
+        className={`input-field text-sm sm:text-base ${className}`}
       />
     </div>
   )

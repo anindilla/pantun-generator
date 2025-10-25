@@ -71,7 +71,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
     switch (selectedMode) {
       case 'continue':
         return (
-          <div className="modern-card p-4">
+          <div className="modern-card p-3 sm:p-4">
             <TextArea
               label="Masukkan baris pantun yang sudah ada (1-3 baris):"
               value={input}
@@ -84,7 +84,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
       
       case 'mood':
         return (
-          <div className="modern-card p-4">
+          <div className="modern-card p-3 sm:p-4">
             <TextArea
               label="Ceritakan suasana hati Anda:"
               value={mood}
@@ -97,8 +97,8 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
       
       case 'random':
         return (
-          <div className="modern-card p-4 text-center">
-            <p className="text-gray-600 text-base font-medium">
+          <div className="modern-card p-3 sm:p-4 text-center">
+            <p className="text-gray-600 text-sm sm:text-base font-medium">
               Klik tombol "Buat Pantun" untuk menghasilkan pantun acak
             </p>
           </div>
@@ -123,9 +123,9 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2 sm:py-4">
       {/* Header */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-4 sm:mb-6">
         <h1 className="hero-title">
           Pantun Generator
         </h1>
@@ -142,15 +142,15 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
       {/* Input Area */}
       {selectedMode && (
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           {renderInputArea()}
           
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center mt-3 sm:mt-4">
             <Button
               onClick={handleGenerate}
               disabled={!canGenerate() || isLoading}
               size="md"
-              className="min-w-[200px]"
+              className="min-w-[180px] sm:min-w-[200px]"
             >
               {isLoading ? 'Membuat Pantun...' : 'Buat Pantun'}
             </Button>
@@ -160,7 +160,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
       {/* Error Display */}
       {error && (
-        <div className="modern-card p-4 mb-4 bg-red-50 border-red-200">
+        <div className="modern-card p-3 sm:p-4 mb-3 sm:mb-4 bg-red-50 border-red-200">
           <p className="text-red-600 text-center font-semibold text-sm">{error}</p>
         </div>
       )}

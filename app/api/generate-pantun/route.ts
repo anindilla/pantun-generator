@@ -12,77 +12,34 @@ export async function POST(request: NextRequest) {
     console.log('GROQ_API_KEY starts with:', process.env.GROQ_API_KEY?.substring(0, 10))
 
 
-    let systemPrompt = `Buat pantun tradisional Indonesia dengan struktur yang BENAR:
+    let systemPrompt = `Anda adalah ahli pantun tradisional Indonesia. Buat pantun dengan struktur yang BENAR:
 
-PENTING: Pantun memiliki 2 bagian terpisah:
-- BARIS 1-2: SAMPIRAN (deskripsi alam/kehidupan, TIDAK perlu berhubungan dengan pesan)
-- BARIS 3-4: ISI (pesan/nasihat yang bermakna)
+STRUKTUR PANTUN:
+- Baris 1-2: SAMPIRAN (deskripsi alam/kehidupan, TIDAK perlu berhubungan dengan pesan)
+- Baris 3-4: ISI (pesan/nasihat yang bermakna)
+- Rima: a-b-a-b (baris 1 & 3, baris 2 & 4)
 
-CONTOH STRUKTUR YANG BENAR:
-
+CONTOH BENAR:
 "Jalan-jalan ke kota Blitar
 Jangan lupa beli sukun
 Jika kamu ingin pintar
 Belajarlah dengan tekun"
-→ Sampiran: tentang perjalanan ke Blitar
-→ Isi: nasihat tentang belajar
-
-"Hati-hati menyeberang
-Jangan sampai titian patah
-Hati-hati di rantau orang
-Jangan sampai berbuat salah"
-→ Sampiran: tentang menyeberang
-→ Isi: nasihat tentang berhati-hati
 
 "Pisang emas dibawa berlayar
 Masak sebiji di atas peti
 Hutang emas boleh dibayar
 Hutang budi dibawa mati"
-→ Sampiran: tentang pisang
-→ Isi: nasihat tentang hutang budi
 
 "Ada ubi ada talas
 Ada budi ada balas
 Sebab pulut santan binasa
 Sebab mulut badan merana"
-→ Sampiran: tentang ubi dan talas
-→ Isi: nasihat tentang budi dan mulut
 
-"Tumbuh merata pohon tebu
-Pergi ke pasar membeli daging
-Banyak harta miskin ilmu
-Bagai rumah tidak berdinding"
-→ Sampiran: tentang pohon tebu dan pasar
-→ Isi: nasihat tentang ilmu
-
-"Dalam semak ada duri
-Ayam kuning buat sarang
-Orang tamak selalu rugi
-Macam anjing dengan bayang"
-→ Sampiran: tentang semak dan ayam
-→ Isi: nasihat tentang tamak
-
-"Kayu bakar dibuat orang
-Arang dibakar memanaskan diri
-Jangan mudah menyalahkan orang
-Cermin muka lihat sendiri"
-→ Sampiran: tentang kayu bakar
-→ Isi: nasihat tentang menyalahkan orang
-
-"Rusa kecil diam terkurung
-Kurang makan kurang minum
-Cari ilmu jangan murung
-Cerialah selalu banyak tersenyum"
-→ Sampiran: tentang rusa
-→ Isi: nasihat tentang ilmu dan senyum
-
-WAJIB: 
+WAJIB:
 - Rima a-b-a-b sempurna
-- Sampiran (baris 1-2) dan Isi (baris 3-4) TIDAK perlu berhubungan
+- Sampiran dan isi TIDAK perlu berhubungan
 - Bahasa natural, bermakna
-- Jangan lanjutkan pola sampiran di baris 3-4
-
-Format: Hanya pantun, tanpa penjelasan.`
+- Format: Hanya pantun, tanpa penjelasan`
 
     let userPrompt = ''
 
@@ -92,10 +49,30 @@ Format: Hanya pantun, tanpa penjelasan.`
         break
       
       case 'continue':
-        userPrompt = `Lengkapi pantun ini menjadi 4 baris penuh:
-${input}
+        const inputLines = input.trim().split('\n').filter((line: string) => line.trim())
+        const lineCount = inputLines.length
+        
+        if (lineCount === 1) {
+          userPrompt = `Lengkapi baris pertama ini menjadi pantun 4 baris penuh:
+"${input}"
 
-WAJIB: Jika yang diberikan adalah sampiran (baris 1-2), buat isi (baris 3-4) yang bermakna. Jika yang diberikan adalah isi (baris 3-4), buat sampiran (baris 1-2) yang sesuai. Rima a-b-a-b sempurna.`
+WAJIB: Buat 3 baris tambahan dengan rima a-b-a-b. Baris 2 adalah sampiran, baris 3-4 adalah isi yang bermakna.`
+        } else if (lineCount === 2) {
+          userPrompt = `Lengkapi sampiran ini menjadi pantun 4 baris penuh:
+"${input}"
+
+WAJIB: Tambahkan 2 baris isi yang bermakna dengan rima a-b-a-b sempurna.`
+        } else if (lineCount === 3) {
+          userPrompt = `Lengkapi pantun ini dengan baris terakhir:
+"${input}"
+
+WAJIB: Tambahkan 1 baris terakhir yang sesuai dengan rima a-b-a-b.`
+        } else {
+          userPrompt = `Perbaiki pantun ini agar memiliki struktur yang benar:
+"${input}"
+
+WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
+        }
         break
       
       case 'mood':
@@ -106,33 +83,90 @@ WAJIB: Jika yang diberikan adalah sampiran (baris 1-2), buat isi (baris 3-4) yan
         return NextResponse.json({ error: 'Mode tidak valid' }, { status: 400 })
     }
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-        max_tokens: 200,
-        temperature: 0.6,
-        top_p: 0.9,
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Groq API error: ${response.status} ${response.statusText}`)
+    // Function to validate rhyme pattern (a-b-a-b)
+    const validateRhyme = (pantun: string): boolean => {
+      const lines = pantun.split('\n').filter(line => line.trim())
+      if (lines.length !== 4) return false
+      
+      const getLastSyllable = (line: string): string => {
+        const words = line.trim().split(' ')
+        const lastWord = words[words.length - 1].toLowerCase()
+        // Simple rhyme detection - get last 2-3 characters
+        return lastWord.slice(-2)
+      }
+      
+      const rhyme1 = getLastSyllable(lines[0])
+      const rhyme2 = getLastSyllable(lines[1])
+      const rhyme3 = getLastSyllable(lines[2])
+      const rhyme4 = getLastSyllable(lines[3])
+      
+      return rhyme1 === rhyme3 && rhyme2 === rhyme4 && rhyme1 !== rhyme2
     }
 
-    const completion = await response.json()
-    const pantun = completion.choices[0]?.message?.content?.trim()
+    // Function to generate pantun with retry logic
+    const generatePantunWithRetry = async (attempt: number = 1): Promise<string> => {
+      const temperature = attempt === 1 ? 0.7 : attempt === 2 ? 0.8 : 0.9
+      const top_p = attempt === 1 ? 0.85 : attempt === 2 ? 0.9 : 0.95
+      
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          max_tokens: 150,
+          temperature,
+          top_p,
+          frequency_penalty: 0.1,
+          presence_penalty: 0.1,
+        }),
+      })
 
-    if (!pantun) {
-      throw new Error('Gagal menghasilkan pantun')
+      if (!response.ok) {
+        throw new Error(`Groq API error: ${response.status} ${response.statusText}`)
+      }
+
+      const completion = await response.json()
+      const pantun = completion.choices[0]?.message?.content?.trim()
+
+      if (!pantun) {
+        throw new Error('Gagal menghasilkan pantun')
+      }
+
+      return pantun
+    }
+
+    // Try to generate pantun with validation and retry
+    let pantun = ''
+    let attempts = 0
+    const maxAttempts = 3
+
+    while (attempts < maxAttempts) {
+      attempts++
+      try {
+        pantun = await generatePantunWithRetry(attempts)
+        
+        // Validate rhyme pattern
+        if (validateRhyme(pantun)) {
+          break
+        } else if (attempts < maxAttempts) {
+          console.log(`Attempt ${attempts}: Rhyme validation failed, retrying...`)
+          continue
+        } else {
+          console.log('Max attempts reached, returning best result')
+        }
+      } catch (error) {
+        if (attempts >= maxAttempts) {
+          throw error
+        }
+        console.log(`Attempt ${attempts} failed, retrying...`)
+      }
     }
 
     return NextResponse.json({ pantun })
