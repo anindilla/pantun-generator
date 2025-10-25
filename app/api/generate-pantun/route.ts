@@ -12,6 +12,23 @@ export async function POST(request: NextRequest) {
     console.log('GROQ_API_KEY starts with:', process.env.GROQ_API_KEY?.substring(0, 10))
     console.log('Environment check passed, proceeding with API call...')
 
+    // Function to normalize mood to basic categories
+    const normalizeMood = (mood: string): string => {
+      const moodLower = mood.toLowerCase()
+      
+      // Map complex moods to basic categories
+      if (moodLower.includes('lapar') || moodLower.includes('hungry')) return 'lapar'
+      if (moodLower.includes('sedih') || moodLower.includes('sad') || moodLower.includes('kehilangan')) return 'sedih'
+      if (moodLower.includes('senang') || moodLower.includes('happy') || moodLower.includes('gembira')) return 'senang'
+      if (moodLower.includes('marah') || moodLower.includes('angry') || moodLower.includes('kesal')) return 'marah'
+      if (moodLower.includes('rindu') || moodLower.includes('kangen') || moodLower.includes('miss')) return 'rindu'
+      if (moodLower.includes('cinta') || moodLower.includes('love') || moodLower.includes('sayang')) return 'cinta'
+      if (moodLower.includes('takut') || moodLower.includes('afraid') || moodLower.includes('scared')) return 'takut'
+      if (moodLower.includes('lelah') || moodLower.includes('tired') || moodLower.includes('capek')) return 'lelah'
+      
+      // Return original if no match
+      return mood
+    }
 
     let systemPrompt = `You are an Indonesian pantun generator. Follow these rules strictly:
 
@@ -80,17 +97,24 @@ Output pantun only. No extra text.`
         break
       
       case 'mood':
-        userPrompt = `Generate a pantun about this specific mood/feeling: "${mood}"
+        const normalizedMood = normalizeMood(mood || '')
+        userPrompt = `Generate a pantun about this specific mood: "${normalizedMood}"
 
-IMPORTANT: The pantun must be DIRECTLY about this mood. 
+CRITICAL: The pantun MUST be about this mood. The content and imagery should relate to the feeling.
 
-For mood "sedih" (sad), generate a pantun about sadness, tears, loneliness, or grief.
-For mood "lapar" (hungry), generate a pantun about hunger, food, eating, or appetite.
-For mood "senang" (happy), generate a pantun about joy, happiness, celebration, or cheer.
+Mood-specific guidance:
+- "lapar": Write about hunger, food, eating, appetite, stomach, cooking, or meals
+- "sedih": Write about sadness, tears, loneliness, loss, grief, or melancholy
+- "senang": Write about happiness, joy, laughter, celebration, or cheerfulness
+- "marah": Write about anger, frustration, annoyance, or rage
+- "rindu": Write about longing, missing someone, distance, or wanting to return
+- "cinta": Write about love, affection, romance, or devotion
+- "takut": Write about fear, worry, anxiety, or being scared
+- "lelah": Write about tiredness, exhaustion, rest, or fatigue
 
 Structure:
-- Lines 1-2: sampiran (imagery related to the mood)
-- Lines 3-4: isi (directly expressing the mood/feeling)
+- Lines 1-2: sampiran (imagery that evokes the mood)
+- Lines 3-4: isi (directly expresses the feeling or situation)
 - Must have a-b-a-b rhyme with exact last 2 characters matching
 
 Example for "sedih":
@@ -201,25 +225,29 @@ Segera ke warung untuk makan.`
       if (mode !== 'mood') return true // Skip validation for non-mood modes
       
       const pantunText = pantun.toLowerCase()
-      const moodLower = mood.toLowerCase()
+      const normalizedMood = normalizeMood(mood)
+      const moodLower = normalizedMood.toLowerCase()
       
-      console.log(`Mood validation: checking mood="${mood}" against pantun="${pantun}"`)
+      console.log(`Mood validation: checking normalized mood="${normalizedMood}" (original: "${mood}") against pantun`)
       
-      // Check for mood-specific keywords
+      // Check for mood-specific keywords (using expanded list from step 1)
       const moodKeywords = {
-        'lapar': ['lapar', 'makan', 'perut', 'nasi', 'makanan', 'keroncongan', 'makan'],
-        'sedih': ['sedih', 'menangis', 'air mata', 'pilu', 'duka', 'nestapa', 'tangis'],
-        'senang': ['senang', 'gembira', 'bahagia', 'ceria', 'riang', 'suka'],
-        'marah': ['marah', 'kesal', 'geram', 'murka', 'dendam'],
-        'rindu': ['rindu', 'kangen', 'merindukan', 'ingin', 'kangen']
+        'lapar': ['lapar', 'makan', 'perut', 'nasi', 'makanan', 'keroncongan', 'kenyang', 'haus', 'menu', 'warung', 'dapur', 'masak', 'hidangan'],
+        'sedih': ['sedih', 'menangis', 'air mata', 'pilu', 'duka', 'nestapa', 'tangis', 'lara', 'derita', 'sendu', 'murung', 'galau', 'sepi', 'sunyi', 'rindu', 'kehilangan'],
+        'senang': ['senang', 'gembira', 'bahagia', 'ceria', 'riang', 'suka', 'tertawa', 'senyum', 'girang', 'sukacita', 'bangga'],
+        'marah': ['marah', 'kesal', 'geram', 'murka', 'dendam', 'jengkel', 'dongkol', 'berang'],
+        'rindu': ['rindu', 'kangen', 'merindukan', 'ingin', 'jauh', 'pergi', 'pulang', 'kembali'],
+        'cinta': ['cinta', 'sayang', 'kasih', 'hati', 'jatuh cinta', 'mencintai', 'kekasih', 'pacar'],
+        'takut': ['takut', 'ngeri', 'seram', 'gentar', 'cemas', 'khawatir', 'was-was'],
+        'lelah': ['lelah', 'capek', 'penat', 'letih', 'istirahat', 'tidur', 'rehat']
       }
       
       // Find matching mood category
       let expectedKeywords: string[] = []
       for (const [moodKey, keywords] of Object.entries(moodKeywords)) {
-        if (moodLower.includes(moodKey)) {
+        if (moodLower === moodKey) {
           expectedKeywords = keywords
-          console.log(`Found mood category: ${moodKey}, keywords: ${keywords.join(', ')}`)
+          console.log(`Found mood category: ${moodKey}, checking ${keywords.length} keywords`)
           break
         }
       }
@@ -235,8 +263,8 @@ Segera ke warung untuk makan.`
       
       // Check if any expected keywords appear in the pantun
       const hasMoodKeywords = expectedKeywords.some(keyword => pantunText.includes(keyword))
-      console.log(`Expected keywords: ${expectedKeywords.join(', ')}`)
-      console.log(`Found keywords in pantun: ${hasMoodKeywords}`)
+      const matchedKeywords = expectedKeywords.filter(keyword => pantunText.includes(keyword))
+      console.log(`Found keywords in pantun: ${matchedKeywords.join(', ') || 'none'}`)
       console.log(`Mood validation result: ${hasMoodKeywords}`)
       return hasMoodKeywords
     }
@@ -316,14 +344,51 @@ Segera ke warung untuk makan.`
       return pantun
     }
 
-    // Fallback pantuns for when all attempts fail
-    const fallbackPantuns = [
-      "Jalan-jalan ke tepi pantai\nMelihat ombak bergulung-gulung\nHidup ini penuh arti\nJaga selalu hati yang tenang",
-      "Bunga mawar di taman\nHarum semerbak di pagi hari\nCinta sejati takkan pudar\nSelamanya di dalam hati",
-      "Ikan berenang di kolam\nAir jernih mengalir tenang\nBelajar rajin setiap hari\nAgar masa depan cerah",
-      "Burung berkicau di dahan\nSuara merdu di pagi hari\nJangan pernah menyerah\nTerus berjuang dengan hati",
-      "Matahari terbit di timur\nMenyinari bumi yang luas\nBerbuat baik setiap saat\nAgar hidup penuh berkah"
-    ]
+    // Mood-specific fallback pantuns
+    const moodFallbackPantuns: Record<string, string[]> = {
+      'lapar': [
+        "Perut keroncongan tak tertahan,\nAroma nasi gudeg menggiurkan.\nLapar sekali ingin makan,\nSegera ke warung untuk makan.",
+        "Matahari tinggi di langit sana,\nPerut kosong mulai berbunyi.\nMakanan lezat yang diimpikan,\nSegera datang untuk mengisi."
+      ],
+      'sedih': [
+        "Hujan turun di malam hari,\nSuara rintik menambah pilu.\nHati ini penuh nestapa,\nAir mata tak bisa tertahan.",
+        "Burung terbang jauh ke langit,\nMeninggalkan sarang yang sunyi.\nHati ini terasa sakit,\nKehilangan yang tak terlupakan."
+      ],
+      'senang': [
+        "Matahari bersinar cerah,\nBurung berkicau riang gembira.\nHati ini penuh sukacita,\nBahagia rasanya tiada tara.",
+        "Bunga mekar di taman indah,\nWarna-warni menghiasi pagi.\nSenyuman lebar di wajah,\nKegembiraan memenuhi hati."
+      ],
+      'marah': [
+        "Guntur menggelegar di langit,\nPetir menyambar dengan dahsyat.\nHati ini penuh amarah,\nKesal yang sulit tertahankan.",
+        "Api membara di tungku panas,\nNyala merah menjilat-jilat.\nKemarahan memuncak lepas,\nEmosi yang sulit dikendalikan."
+      ],
+      'rindu': [
+        "Burung terbang jauh ke langit,\nMeninggalkan sarang yang sunyi.\nRindu ini terasa sakit,\nIngin bertemu kembali.",
+        "Bulan bersinar di malam sepi,\nBintang berkelap-kelip jauh.\nHati ini penuh rindu,\nIngin kembali ke pelukmu."
+      ],
+      'cinta': [
+        "Bunga mawar di taman indah,\nHarum semerbak di pagi hari.\nCinta sejati takkan pudar,\nSelamanya di dalam hati.",
+        "Matahari terbit di timur,\nMenyinari bumi yang luas.\nCinta ini takkan surut,\nSelamanya untukmu saja."
+      ],
+      'takut': [
+        "Malam gelap tanpa bintang,\nSuara angin menakutkan.\nHati ini penuh ketakutan,\nCemas yang sulit hilangkan.",
+        "Bayangan hitam di kegelapan,\nSuara gemuruh menggelegar.\nRasa takut melanda jiwa,\nKhawatir yang tak terkira."
+      ],
+      'lelah': [
+        "Matahari tenggelam di barat,\nSinar redup mulai padam.\nBadan ini terasa lelah,\nIngin segera beristirahat.",
+        "Burung pulang ke sarangnya,\nSetelah seharian terbang.\nTubuh ini penuh kelelahan,\nIngin tidur dengan tenang."
+      ],
+      'default': [
+        "Jalan-jalan ke tepi pantai,\nMelihat ombak bergulung-gulung.\nHidup ini penuh arti,\nJaga selalu hati yang tenang."
+      ]
+    }
+
+    // Function to get mood-specific fallback pantun
+    const getMoodFallbackPantun = (mood: string): string => {
+      const normalizedMood = normalizeMood(mood)
+      const fallbacks = moodFallbackPantuns[normalizedMood] || moodFallbackPantuns['default']
+      return fallbacks[Math.floor(Math.random() * fallbacks.length)]
+    }
 
     // Try to generate pantun with validation and retry
     let pantun = ''
@@ -345,22 +410,18 @@ Segera ke warung untuk makan.`
         
         console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}, Syllables=${syllablesValid}, Mood=${moodValid}`)
         
-        if (rhymeValid && wordsValid && semanticsValid && syllablesValid) {
-          // For mood mode, if mood validation fails, we'll still accept it but log a warning
-          if (mode === 'mood' && !moodValid) {
-            console.log(`WARNING: Mood validation failed for mood="${mood}", but accepting pantun anyway`)
-          }
-            console.log('All validations passed!')
-            break
-          } else if (attempts < maxAttempts) {
-            console.log(`Attempt ${attempts}: Validation failed, retrying...`)
-            continue
-          } else {
-            console.log('Max attempts reached, using fallback pantun')
-            // Use fallback pantun when all attempts fail
-            pantun = fallbackPantuns[Math.floor(Math.random() * fallbackPantuns.length)]
-            break
-          }
+        if (rhymeValid && wordsValid && semanticsValid && syllablesValid && moodValid) {
+          console.log('All validations passed!')
+          break
+        } else if (attempts < maxAttempts) {
+          console.log(`Attempt ${attempts}: Validation failed, retrying...`)
+          continue
+        } else {
+          console.log('Max attempts reached, using mood-specific fallback pantun')
+          // Use mood-specific fallback pantun
+          pantun = getMoodFallbackPantun(mood || '')
+          break
+        }
         } catch (error) {
           console.log(`Attempt ${attempts} failed:`, error instanceof Error ? error.message : String(error))
           if (attempts >= maxAttempts) {
@@ -369,8 +430,8 @@ Segera ke warung untuk makan.`
         }
       }
     } catch (error) {
-      console.log('All API attempts failed, using fallback pantun')
-      pantun = fallbackPantuns[Math.floor(Math.random() * fallbackPantuns.length)]
+      console.log('All API attempts failed, using mood-specific fallback pantun')
+      pantun = getMoodFallbackPantun(mood || '')
     }
 
     return NextResponse.json({ pantun })
