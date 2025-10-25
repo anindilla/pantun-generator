@@ -1,15 +1,15 @@
 <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="180" height="180" fill="white"/>
-  <text x="45" y="135" font-family="Arial, sans-serif" font-size="100" font-weight="bold" fill="black">PG</text>
+  <text x="90" y="110" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="black" text-anchor="middle" dominant-baseline="middle">PG</text>
   <!-- Add the triangular shadow effect -->
   <g opacity="0.2">
-    <polygon points="50,140 60,150 40,160" fill="#999999"/>
-    <polygon points="60,150 70,160 50,170" fill="#999999"/>
-    <polygon points="70,160 80,170 60,180" fill="#999999"/>
-    <polygon points="80,170 90,180 70,190" fill="#999999"/>
-    <polygon points="90,180 100,190 80,200" fill="#999999"/>
-    <polygon points="100,190 110,200 90,210" fill="#999999"/>
-    <polygon points="110,200 120,210 100,220" fill="#999999"/>
-    <polygon points="120,210 130,220 110,230" fill="#999999"/>
+    <polygon points="100,120 110,130 90,140" fill="#999999"/>
+    <polygon points="110,130 120,140 100,150" fill="#999999"/>
+    <polygon points="120,140 130,150 110,160" fill="#999999"/>
+    <polygon points="130,150 140,160 120,170" fill="#999999"/>
+    <polygon points="140,160 150,170 130,180" fill="#999999"/>
+    <polygon points="150,170 160,180 140,190" fill="#999999"/>
+    <polygon points="160,180 170,190 150,200" fill="#999999"/>
+    <polygon points="170,190 180,200 160,210" fill="#999999"/>
   </g>
 </svg>
