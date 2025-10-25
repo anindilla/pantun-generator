@@ -3,6 +3,7 @@ import Groq from 'groq-sdk'
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
+  dangerouslyAllowBrowser: true,
 })
 
 export async function POST(request: NextRequest) {
@@ -12,6 +13,9 @@ export async function POST(request: NextRequest) {
     if (!process.env.GROQ_API_KEY) {
       return NextResponse.json({ error: 'API key tidak ditemukan. Silakan periksa konfigurasi.' }, { status: 500 })
     }
+
+    console.log('GROQ_API_KEY length:', process.env.GROQ_API_KEY?.length)
+    console.log('GROQ_API_KEY starts with:', process.env.GROQ_API_KEY?.substring(0, 10))
 
 
     let systemPrompt = `Buat pantun tradisional Indonesia dengan struktur yang BENAR:
