@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
 
     console.log('GROQ_API_KEY length:', process.env.GROQ_API_KEY?.length)
     console.log('GROQ_API_KEY starts with:', process.env.GROQ_API_KEY?.substring(0, 10))
+    console.log('Environment check passed, proceeding with API call...')
 
 
     let systemPrompt = `Anda adalah ahli pantun tradisional Indonesia. Buat pantun dengan struktur yang BENAR:
@@ -283,7 +284,7 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
+          model: "llama-3.1-70b-versatile",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
@@ -297,7 +298,9 @@ WAJIB: Pastikan 4 baris dengan rima a-b-a-b, baris 1-2 sampiran, baris 3-4 isi.`
       })
 
       if (!response.ok) {
-        throw new Error(`Groq API error: ${response.status} ${response.statusText}`)
+        const errorText = await response.text()
+        console.error('Groq API error response:', errorText)
+        throw new Error(`Groq API error: ${response.status} ${response.statusText} - ${errorText}`)
       }
 
       const completion = await response.json()
