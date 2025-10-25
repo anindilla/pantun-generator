@@ -101,8 +101,8 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
       case 'random':
         return (
           <div className="modern-card p-3 sm:p-4 text-center">
-            <p className="text-gray-600 text-sm sm:text-base font-medium">
-              Klik tombol "Buat Pantun" untuk menghasilkan pantun acak
+            <p className="text-gray-600 text-xs sm:text-sm font-medium">
+              Siap membuat pantun acak!
             </p>
           </div>
         )
@@ -126,9 +126,9 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-1 sm:py-2">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2 sm:py-4">
       {/* Header */}
-      <div className="text-center mb-4 sm:mb-6 animate-fade-in">
+      <div className="text-center mb-3 sm:mb-4 animate-fade-in">
         <h1 className="hero-title">
           Pantun Generator
         </h1>
@@ -147,15 +147,20 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
       {/* Input Area */}
       {selectedMode && (
-        <div className="mb-4 sm:mb-6 animate-stagger">
+        <div className="mb-4 sm:mb-6 animate-stagger" style={{ paddingBottom: '80px' }}>
           {renderInputArea()}
-          
-          <div className="flex justify-center mt-3 sm:mt-4">
+        </div>
+      )}
+
+      {/* Sticky Action Button - Only visible when mode is selected */}
+      {selectedMode && (
+        <div className="sticky-action-bar">
+          <div className="max-w-3xl mx-auto">
             <Button
               onClick={handleGenerate}
               disabled={!canGenerate() || isLoading}
               size="md"
-              className="min-w-[200px] sm:min-w-[240px]"
+              className="w-full"
             >
               {isLoading ? 'Membuat Pantun...' : 'Buat Pantun'}
             </Button>
@@ -172,7 +177,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
       {/* Result Display */}
       {generatedPantun && (
-        <div className="animate-bounce-gentle">
+        <div className="animate-bounce-gentle" style={{ paddingBottom: selectedMode ? '80px' : '0' }}>
           <PantunDisplay
             pantun={generatedPantun}
             onGenerateNew={handleGenerateNew}
