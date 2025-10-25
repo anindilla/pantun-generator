@@ -35,12 +35,12 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
   }
 
   return (
-    <div className="modern-card p-4 sm:p-6 text-center">
-      <div className="mb-3 sm:mb-4">
-        <h3 className="text-base sm:text-lg font-bold text-black mb-2 sm:mb-3">
+    <div className="modern-card p-6 sm:p-8 text-center">
+      <div className="mb-6">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
           Pantun Anda
         </h3>
-        <div className="pantun-display bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
+        <div className="pantun-display">
           {formatPantun(pantun)}
         </div>
       </div>

@@ -2,14 +2,14 @@ import React from 'react'
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="sticky bottom-0 w-full py-4 sm:py-6 px-3 sm:px-4 text-center bg-white/80 backdrop-blur-sm border-t border-gray-200/50">
-      <p className="text-xs sm:text-sm text-gray-600 font-medium">
+    <footer className="sticky bottom-0 w-full py-6 sm:py-8 px-4 text-center bg-white/60 backdrop-blur-md border-t border-white/30">
+      <p className="text-sm sm:text-base text-gray-600 font-medium">
         Vibe-coded by{' '}
         <a 
           href="https://anindilla.com" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="text-black hover:text-gray-800 font-semibold transition-colors duration-200 underline decoration-2 underline-offset-2"
+          className="text-gray-800 hover:text-orange-600 font-semibold transition-all duration-300 hover:underline decoration-2 underline-offset-4 decoration-orange-500"
         >
           dilleuh
         </a>

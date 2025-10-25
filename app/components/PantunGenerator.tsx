@@ -125,7 +125,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
   return (
     <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2 sm:py-4">
       {/* Header */}
-      <div className="text-center mb-4 sm:mb-6">
+      <div className="text-center mb-6 sm:mb-8 animate-fade-in">
         <h1 className="hero-title">
           Pantun Generator
         </h1>
@@ -135,22 +135,24 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
       </div>
 
       {/* Mode Selection */}
-      <ModeSelector
-        selectedMode={selectedMode}
-        onModeSelect={handleModeSelect}
-      />
+      <div className="animate-slide-up">
+        <ModeSelector
+          selectedMode={selectedMode}
+          onModeSelect={handleModeSelect}
+        />
+      </div>
 
       {/* Input Area */}
       {selectedMode && (
-        <div className="mb-4 sm:mb-6">
+        <div className="mb-6 sm:mb-8 animate-stagger">
           {renderInputArea()}
           
-          <div className="flex justify-center mt-3 sm:mt-4">
+          <div className="flex justify-center mt-4 sm:mt-6">
             <Button
               onClick={handleGenerate}
               disabled={!canGenerate() || isLoading}
               size="md"
-              className="min-w-[180px] sm:min-w-[200px]"
+              className="min-w-[200px] sm:min-w-[240px]"
             >
               {isLoading ? 'Membuat Pantun...' : 'Buat Pantun'}
             </Button>
@@ -167,11 +169,13 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
       {/* Result Display */}
       {generatedPantun && (
-        <PantunDisplay
-          pantun={generatedPantun}
-          onGenerateNew={handleGenerateNew}
-          isLoading={isLoading}
-        />
+        <div className="animate-bounce-gentle">
+          <PantunDisplay
+            pantun={generatedPantun}
+            onGenerateNew={handleGenerateNew}
+            isLoading={isLoading}
+          />
+        </div>
       )}
     </div>
   )
