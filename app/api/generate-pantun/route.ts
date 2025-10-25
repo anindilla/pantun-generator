@@ -71,10 +71,12 @@ export async function POST(request: NextRequest) {
 
 # CONTINUATION MODE INSTRUCTIONS:
 When the user provides existing lines to continue, you MUST:
-- Use the provided lines EXACTLY as given
+- Use the provided lines EXACTLY as given - do NOT change them
 - Continue from those lines, do NOT create a completely new pantun
+- Do NOT copy examples from this prompt
 - Maintain the existing rhyme pattern from the provided lines
 - Add only the missing lines to complete the pantun
+- The provided lines are the foundation - build upon them, don't replace them
 
 - Example of GOOD pantun with EXACT rhyme:
   Jalan-jalan ke kota Blitar,  (ends with "ar")
@@ -183,17 +185,17 @@ STUDY THE EXAMPLES IN THE SYSTEM PROMPT - they show perfect a-b-a-b patterns:
           userPrompt = `Continue this first line into a complete 4-line pantun:
 "${input}"
 
-Add 3 more lines. Line 1 is given, add lines 2, 3, and 4.`
+IMPORTANT: You MUST start with the exact line above. Do NOT change it. Add 3 more lines after it.`
         } else if (lineCount === 2) {
           userPrompt = `Complete this sampiran into a full 4-line pantun:
 "${input}"
 
-Lines 1-2 are given, add lines 3-4 (isi).`
+IMPORTANT: You MUST start with the exact 2 lines above. Do NOT change them. Add 2 more lines (lines 3-4).`
         } else if (lineCount === 3) {
           userPrompt = `Complete this pantun with the final line:
 "${input}"
 
-Lines 1-3 are given, add only line 4.`
+IMPORTANT: You MUST start with the exact 3 lines above. Do NOT change them. Add only line 4.`
         } else {
           userPrompt = `Fix this pantun to have correct structure:
 "${input}"
