@@ -45,6 +45,12 @@ export async function POST(request: NextRequest) {
   Kalau hati sedang bergetar,  (ends with "ar" - EXACT match with line 1)
   Tandanya rindu mulai bersemi. (ends with "mi" - EXACT match with line 2)
 
+- Example of MOOD pantun (for "lapar"):
+  Perut keroncongan tak tertahan,  (ends with "an")
+  Aroma nasi gudeg menggiurkan.   (ends with "an")
+  Lapar sekali ingin makan,        (ends with "an" - EXACT match with line 1)
+  Segera ke warung untuk makan.   (ends with "an" - EXACT match with line 2)
+
 Remember:
 ✅ Simple, rhythmic, emotionally natural.  
 ❌ No weird logic. No filler. No forced rhyme.  
@@ -74,7 +80,16 @@ Output pantun only. No extra text.`
         break
       
       case 'mood':
-        userPrompt = `Generate a pantun reflecting this mood: "${mood}". Lines 1-2 = sampiran (simple imagery), lines 3-4 = isi (emotion/message). Natural rhyme a-b-a-b.`
+        userPrompt = `Generate a pantun that DIRECTLY relates to this mood/feeling: "${mood}". 
+
+CRITICAL REQUIREMENTS:
+- The pantun content MUST be directly about the mood mentioned
+- If mood is "lapar" or "hungry", pantun should be about hunger, food, eating
+- If mood is "sedih" or "sad", pantun should be about sadness, tears, loneliness
+- If mood is "senang" or "happy", pantun should be about joy, celebration, happiness
+- Lines 1-2 = sampiran (imagery related to the mood)
+- Lines 3-4 = isi (directly expressing the mood/feeling)
+- Natural rhyme a-b-a-b with EXACT last 2 characters matching`
         break
       
       default:
