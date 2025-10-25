@@ -1,28 +1,56 @@
 import React, { useState } from 'react'
 import { Card } from './Card'
 import { Button } from './Button'
-import { FiCopy, FiCheck, FiRefreshCw } from 'react-icons/fi'
+import { FiCopy, FiCheck, FiRefreshCw, FiShare2 } from 'react-icons/fi'
+import { trackPantunCopied, trackPantunShared } from '@/lib/analytics'
 
 interface PantunDisplayProps {
   pantun: string
   onGenerateNew: () => void
   isLoading?: boolean
+  mode?: string | null
+  shareUrl?: string
 }
 
 export const PantunDisplay: React.FC<PantunDisplayProps> = ({
   pantun,
   onGenerateNew,
-  isLoading = false
+  isLoading = false,
+  mode = 'unknown',
+  shareUrl
 }) => {
   const [copied, setCopied] = useState(false)
+  const [shared, setShared] = useState(false)
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(pantun)
+      const textWithAttribution = `${pantun}\n\nMade with pantun-generator.vercel.app by dilleuh`
+      await navigator.clipboard.writeText(textWithAttribution)
       setCopied(true)
+      trackPantunCopied(mode || 'unknown')
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       console.error('Failed to copy text: ', err)
+    }
+  }
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share && shareUrl) {
+        await navigator.share({
+          title: 'Pantun Generator',
+          text: pantun,
+          url: shareUrl
+        })
+        trackPantunShared(mode || 'unknown', 'native_share')
+      } else if (shareUrl) {
+        await navigator.clipboard.writeText(shareUrl)
+        trackPantunShared(mode || 'unknown', 'copy_link')
+        setShared(true)
+        setTimeout(() => setShared(false), 2000)
+      }
+    } catch (err) {
+      console.error('Failed to share: ', err)
     }
   }
 
@@ -64,6 +92,27 @@ export const PantunDisplay: React.FC<PantunDisplayProps> = ({
             </>
           )}
         </Button>
+
+        {shareUrl && (
+          <Button
+            onClick={handleShare}
+            variant="secondary"
+            size="sm"
+            className="flex items-center justify-center gap-2 min-w-[100px] sm:min-w-[120px]"
+          >
+            {shared ? (
+              <>
+                <FiCheck className="w-4 h-4" />
+                Link Tersalin!
+              </>
+            ) : (
+              <>
+                <FiShare2 className="w-4 h-4" />
+                Bagikan
+              </>
+            )}
+          </Button>
+        )}
         
         <Button
           onClick={onGenerateNew}

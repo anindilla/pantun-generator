@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vercel/postgres": "^0.10.0",
     "groq-sdk": "^0.34.0",
+    "nanoid": "^5.1.6",
     "next": "^16.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

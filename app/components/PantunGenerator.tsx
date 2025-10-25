@@ -6,6 +6,7 @@ import { PantunDisplay } from './PantunDisplay'
 import { TextArea } from './TextArea'
 import { Button } from './Button'
 import { Card } from './Card'
+import { trackModeSelected, trackPantunGenerated } from '@/lib/analytics'
 
 type Mode = 'random' | 'continue' | 'mood'
 
@@ -16,6 +17,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
   const [input, setInput] = useState('')
   const [mood, setMood] = useState('')
   const [generatedPantun, setGeneratedPantun] = useState('')
+  const [shareUrl, setShareUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -24,7 +26,9 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
     setInput('')
     setMood('')
     setGeneratedPantun('')
+    setShareUrl('')
     setError('')
+    trackModeSelected(mode)
   }
 
   const handleGenerate = async () => {
@@ -53,6 +57,30 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
       }
 
       setGeneratedPantun(data.pantun)
+      trackPantunGenerated(selectedMode, true)
+
+      // Save pantun to database and get share URL
+      try {
+        const saveResponse = await fetch('/api/pantun/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: data.pantun,
+            mode: selectedMode,
+          }),
+        })
+
+        if (saveResponse.ok) {
+          const saveData = await saveResponse.json()
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
+          setShareUrl(`${baseUrl}/p/${saveData.slug}`)
+        }
+      } catch (saveError) {
+        console.error('Failed to save pantun:', saveError)
+        // Continue without share URL
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Terjadi kesalahan')
     } finally {
@@ -62,6 +90,7 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
 
   const handleGenerateNew = () => {
     setGeneratedPantun('')
+    setShareUrl('')
     setError('')
   }
 
@@ -174,6 +203,8 @@ export const PantunGenerator: React.FC<PantunGeneratorProps> = () => {
             pantun={generatedPantun}
             onGenerateNew={handleGenerateNew}
             isLoading={isLoading}
+            mode={selectedMode}
+            shareUrl={shareUrl}
           />
         </div>
       )}
