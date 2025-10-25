@@ -206,8 +206,8 @@ Segera ke warung untuk makan.`
         }
       }
       
-      // Stricter validation - reject if any clearly made-up words
-      const isValid = suspiciousWords === 0
+      // More lenient validation - allow some suspicious words but not too many
+      const isValid = suspiciousWords <= 1 // Allow 1 suspicious word
       if (!isValid) {
         console.log(`Word validation failed. Made-up words: ${madeUpWords.join(', ')}`)
       }
@@ -280,10 +280,10 @@ Segera ke warung untuk makan.`
         wordFreq.set(word, (wordFreq.get(word) || 0) + 1)
       }
       
-      // Flag if same uncommon word appears 3+ times
+      // Flag if same uncommon word appears 4+ times (more lenient)
       let hasRepetitiveWords = false
       wordFreq.forEach((count, word) => {
-        if (count >= 3 && word.length > 5) {
+        if (count >= 4 && word.length > 6) {
           hasRepetitiveWords = true
         }
       })
@@ -493,7 +493,11 @@ Segera ke warung untuk makan.`
         "Burung pulang ke sarangnya,\nSetelah seharian terbang.\nTubuh ini penuh kelelahan,\nIngin tidur dengan tenang."
       ],
       'default': [
-        "Jalan-jalan ke tepi pantai,\nMelihat ombak bergulung-gulung.\nHidup ini penuh arti,\nJaga selalu hati yang tenang."
+        "Jalan-jalan ke tepi pantai,\nMelihat ombak bergulung-gulung.\nHidup ini penuh arti,\nJaga selalu hati yang tenang.",
+        "Bunga mekar di taman indah,\nWarna-warni menghiasi pagi.\nSenyuman lebar di wajah,\nKegembiraan memenuhi hati.",
+        "Matahari terbit di timur,\nMenyinari bumi dengan hangat.\nHidup ini penuh makna,\nBersyukur atas karunia Tuhan.",
+        "Burung berkicau di pagi hari,\nSuara merdu mengisi udara.\nHati yang bersih dan suci,\nMembawa damai sepanjang masa.",
+        "Angin sepoi-sepoi berhembus,\nMembawa kesejukan di hati.\nPerjalanan hidup yang indah,\nPenuh dengan harapan suci."
       ]
     }
 
@@ -520,18 +524,22 @@ Segera ke warung untuk makan.`
         const wordsValid = validateWords(pantun)
         const semanticsValid = validateSemantics(pantun)
         const syllablesValid = validateSyllables(pantun)
-        const moodValid = validateMood(pantun, mood || '') // NEW
+        const moodValid = validateMood(pantun, mood || '')
         
         console.log(`Attempt ${attempts}: Rhyme=${rhymeValid}, Words=${wordsValid}, Semantics=${semanticsValid}, Syllables=${syllablesValid}, Mood=${moodValid}`)
         
-        if (rhymeValid && wordsValid && semanticsValid && syllablesValid && moodValid) {
-          console.log('All validations passed!')
+        // For mood mode, require all validations. For other modes, be more lenient
+        const isFullyValid = rhymeValid && wordsValid && semanticsValid && syllablesValid && moodValid
+        const isPartiallyValid = rhymeValid && wordsValid && (mode !== 'mood' || moodValid)
+        
+        if (isFullyValid || (isPartiallyValid && attempts >= 3)) {
+          console.log('Validation passed!')
           break
         } else if (attempts < maxAttempts) {
           console.log(`Attempt ${attempts}: Validation failed, retrying...`)
           continue
         } else {
-          console.log('Max attempts reached, using mood-specific fallback pantun')
+          console.log('Max attempts reached, using fallback pantun')
           // Use mood-specific fallback pantun
           pantun = getMoodFallbackPantun(mood || '')
           break
