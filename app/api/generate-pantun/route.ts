@@ -1,10 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Groq from 'groq-sdk'
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-  dangerouslyAllowBrowser: true,
-})
 
 export async function POST(request: NextRequest) {
   try {
@@ -112,17 +106,29 @@ WAJIB: Jika yang diberikan adalah sampiran (baris 1-2), buat isi (baris 3-4) yan
         return NextResponse.json({ error: 'Mode tidak valid' }, { status: 400 })
     }
 
-    const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      max_tokens: 200,
-      temperature: 0.6,
-      top_p: 0.9,
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        max_tokens: 200,
+        temperature: 0.6,
+        top_p: 0.9,
+      }),
     })
 
+    if (!response.ok) {
+      throw new Error(`Groq API error: ${response.status} ${response.statusText}`)
+    }
+
+    const completion = await response.json()
     const pantun = completion.choices[0]?.message?.content?.trim()
 
     if (!pantun) {
