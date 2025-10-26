@@ -1,16 +1,92 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Function to call Gemini API
+async function callGeminiAPI(systemPrompt: string, userPrompt: string): Promise<string | null> {
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `${systemPrompt}\n\n${userPrompt}`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.85,
+          maxOutputTokens: 200,
+        }
+      }),
+    })
+
+    if (!response.ok) {
+      console.log('Gemini API error:', response.status, response.statusText)
+      return null
+    }
+
+    const data = await response.json()
+    
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+      return data.candidates[0].content.parts[0].text
+    }
+    
+    return null
+  } catch (error) {
+    console.log('Gemini API call failed:', error instanceof Error ? error.message : String(error))
+    return null
+  }
+}
+
+// Function to call Groq API (fallback)
+async function callGroqAPI(systemPrompt: string, userPrompt: string): Promise<string | null> {
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-8b-instant",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        max_tokens: 200,
+        temperature: 0.7,
+        top_p: 0.85,
+        frequency_penalty: 0.5,
+        presence_penalty: 0.3,
+      }),
+    })
+
+    if (!response.ok) {
+      console.log('Groq API error:', response.status, response.statusText)
+      return null
+    }
+
+    const data = await response.json()
+    return data.choices?.[0]?.message?.content || null
+  } catch (error) {
+    console.log('Groq API call failed:', error instanceof Error ? error.message : String(error))
+    return null
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { mode, input, mood } = await request.json()
 
-    if (!process.env.GROQ_API_KEY) {
+    // Check if at least one API key is available
+    if (!process.env.GEMINI_API_KEY && !process.env.GROQ_API_KEY) {
       return NextResponse.json({ error: 'API key tidak ditemukan. Silakan periksa konfigurasi.' }, { status: 500 })
     }
 
-    console.log('GROQ_API_KEY length:', process.env.GROQ_API_KEY?.length)
-    console.log('GROQ_API_KEY starts with:', process.env.GROQ_API_KEY?.substring(0, 10))
-    console.log('Environment check passed, proceeding with API call...')
+    console.log('Gemini API key available:', !!process.env.GEMINI_API_KEY)
+    console.log('Groq API key available:', !!process.env.GROQ_API_KEY)
 
     // Function to normalize mood to basic categories
     const normalizeMood = (mood: string): string => {
@@ -532,46 +608,33 @@ Segera ke warung untuk makan.`
       return isRhyme1 && isRhyme2 && isDifferent
     }
 
-    // Function to generate pantun with retry logic
+    // Function to generate pantun with Gemini-first approach and retry logic
     const generatePantunWithRetry = async (attempt: number = 1): Promise<string> => {
-      // More conservative parameters for natural, high-quality output
-      const temperature = attempt === 1 ? 0.7 : attempt === 2 ? 0.6 : 0.5
-      const top_p = attempt === 1 ? 0.85 : attempt === 2 ? 0.8 : 0.75
-
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-          max_tokens: 200, // Increased from 150 for more flexibility
-          temperature,
-          top_p,
-          frequency_penalty: 0.5, // Increased from 0.3 to reduce repetition
-          presence_penalty: 0.3,  // Increased from 0.2 for more variety
-      }),
-    })
-
-    if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Groq API error response:', errorText)
-        throw new Error(`Groq API error: ${response.status} ${response.statusText} - ${errorText}`)
-    }
-
-    const completion = await response.json()
-    const pantun = completion.choices[0]?.message?.content?.trim()
-
-    if (!pantun) {
-      throw new Error('Gagal menghasilkan pantun')
+      console.log(`Attempt ${attempt}: Trying Gemini first, then Groq fallback`)
+      
+      // Try Gemini API first if available
+      if (process.env.GEMINI_API_KEY) {
+        console.log('Attempting Gemini API call...')
+        const geminiResult = await callGeminiAPI(systemPrompt, userPrompt)
+        if (geminiResult) {
+          console.log('Gemini API success!')
+          return geminiResult.trim()
+        }
+        console.log('Gemini API failed, trying Groq fallback...')
       }
-
-      return pantun
+      
+      // Fallback to Groq if Gemini failed or not available
+      if (process.env.GROQ_API_KEY) {
+        console.log('Attempting Groq API call...')
+        const groqResult = await callGroqAPI(systemPrompt, userPrompt)
+        if (groqResult) {
+          console.log('Groq API success!')
+          return groqResult.trim()
+        }
+        console.log('Groq API failed')
+      }
+      
+      throw new Error('Both Gemini and Groq APIs failed')
     }
 
     // Mood-specific fallback pantuns
