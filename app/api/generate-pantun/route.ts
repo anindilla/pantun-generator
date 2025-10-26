@@ -176,11 +176,23 @@ When the user provides existing lines to continue, you MUST:
 - Add only the missing lines to complete the pantun
 - The provided lines are the foundation - build upon them, don't replace them
 
-- Example of GOOD pantun with EXACT rhyme:
+# CRITICAL: DO NOT REPEAT THE SAME LINE TWICE
+- Line 1 and Line 3 must have DIFFERENT CONTENT but SAME RHYME ENDING
+- Line 2 and Line 4 must have DIFFERENT CONTENT but SAME RHYME ENDING
+- NEVER repeat the exact same line twice
+- Each line must be unique in content, only the rhyme endings should match
+
+- Example of GOOD pantun with EXACT rhyme (NO REPEATED LINES):
   Jalan-jalan ke kota Blitar,  (ends with "ar")
   Beli onde di pinggir kali.   (ends with "li")
-  Kalau hati sedang bergetar,  (ends with "ar" - EXACT match with line 1)
-  Tandanya rindu mulai bersemi. (ends with "mi" - EXACT match with line 2)
+  Kalau hati sedang bergetar,  (ends with "ar" - DIFFERENT content, SAME rhyme as line 1)
+  Tandanya rindu mulai bersemi. (ends with "mi" - DIFFERENT content, SAME rhyme as line 2)
+
+- Example of BAD pantun (WRONG - repeating same line):
+  Jalan-jalan ke kota Blitar,  (ends with "ar")
+  Beli onde di pinggir kali.   (ends with "li")
+  Jalan-jalan ke kota Blitar,  (WRONG - same content as line 1)
+  Beli onde di pinggir kali.   (WRONG - same content as line 2)
 
 - Example of MOOD pantun (for "lapar"):
   Perut keroncongan tak tertahan,  (ends with "an")
@@ -285,11 +297,16 @@ Then add 3 more lines to complete the pantun.
 
 The complete pantun should be:
 Line 1: "${input}"
-Line 2: [add here]
-Line 3: [add here - must rhyme with line 1]
-Line 4: [add here - must rhyme with line 2]
+Line 2: [add here - different content from line 1]
+Line 3: [add here - different content from line 1, but same rhyme ending as line 1]
+Line 4: [add here - different content from line 2, but same rhyme ending as line 2]
 
-You MUST start with the exact line provided and add 3 more lines.`
+CRITICAL RULES:
+- You MUST start with the exact line provided
+- Line 1 and Line 3 must have DIFFERENT CONTENT but SAME RHYME ENDING
+- Line 2 and Line 4 must have DIFFERENT CONTENT but SAME RHYME ENDING
+- NEVER repeat the same line twice - each line must be unique in content
+- Only the rhyme endings should match, not the entire content`
         break
       
       case 'mood':
