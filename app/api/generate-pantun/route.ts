@@ -119,6 +119,12 @@ export async function POST(request: NextRequest) {
 - Use natural, flowing Indonesian language
 - Make the added lines meaningful and connected to the provided lines
 
+# CRITICAL: DO NOT REPEAT THE SAME LINE TWICE
+- Line 1 and Line 3 must have DIFFERENT CONTENT but SAME RHYME ENDING
+- Line 2 and Line 4 must have DIFFERENT CONTENT but SAME RHYME ENDING
+- NEVER repeat the exact same line twice
+- Each line must be unique in content, only the rhyme endings should match
+
 # RHYME REQUIREMENTS:
 - Line 1 and Line 3 MUST end with EXACTLY the same sound/characters
 - Line 2 and Line 4 MUST end with EXACTLY the same sound/characters  
@@ -253,6 +259,7 @@ STUDY THESE EXAMPLES CAREFULLY:
 - Notice the meaningful content that makes sense
 - Notice the proper Indonesian word usage
 
+
 # EXAMPLES OF WHAT NOT TO DO:
 ❌ WRONG - Made-up words:
   "Berkelanjutan dengan berkelanjutan" (berkelanjutan is not a real word)
@@ -265,6 +272,91 @@ STUDY THESE EXAMPLES CAREFULLY:
 ❌ WRONG - Forced rhymes with fake words:
   "Hati yang bergetar-getaran" (bergetar-getaran is not a real word)
   "Mata yang berkedip-kedipan" (berkedip-kedipan is not a real word)
+
+# PERFECT EXAMPLES TO LEARN FROM (15 High-Quality Pantuns):
+
+1. "Jalan-jalan ke pinggir empang,     (ends with "empang")
+   Nemu katak di pinggir empang.       (ends with "empang")
+   Hati siapa tak bimbang,            (ends with "bimbang")
+   Kamu botak minta dikepang."         (ends with "kepang")
+
+2. "Emak nyapu pakai sapu lidi,        (ends with "lidi")
+   Sudah lapar makan apa pun jadi.     (ends with "jadi")
+   Tak ada kerja, nganggur pun jadi,   (ends with "jadi")
+   Tak ada gigi, ompong pun jadi."      (ends with "jadi")
+
+3. "Aku ingin ke Korea Selatan,        (ends with "Selatan")
+   Kamu justru ingin ke Jepang.       (ends with "Jepang")
+   Walaupun kita sudah jadi mantan,   (ends with "mantan")
+   Namun aku masih tetap sayang."      (ends with "sayang")
+
+4. "Kapal berlayar di Laut Jawa,       (ends with "Jawa")
+   Nakhoda mengacungkan jempol.       (ends with "jempol")
+   Adik menangis lalu tertawa,        (ends with "tertawa")
+   Melihat kakak masih mengompol."     (ends with "mengompol")
+
+5. "Bunga mawar warnanya merah,        (ends with "merah")
+   Mekar indah di taman hati.          (ends with "hati")
+   Cintaku padamu takkan goyah,       (ends with "goyah")
+   Sampai akhir hayat ini."            (ends with "ini")
+
+6. "Ke pasar beli mangga muda,         (ends with "muda")
+   Mangga dimakan manis terasa.        (ends with "terasa")
+   Rajin belajar sepanjang masa,      (ends with "masa")
+   Agar kelak hidup bahagia."          (ends with "bahagia")
+
+7. "Burung gelatik,                    (ends with "gelatik")
+   Lagi hinggap di batu.               (ends with "batu")
+   Kamu memang cantik,                (ends with "cantik")
+   Tapi kok badannya bau."             (ends with "bau")
+
+8. "Pak Tegus pergi ke Bali,           (ends with "Bali")
+   Melihat bule sedang menari.         (ends with "menari")
+   Aduh pantas kau bau sekali,        (ends with "sekali")
+   Kau belum mandi enam hari."         (ends with "hari")
+
+9. "Nonton TV acara si Unyil,          (ends with "Unyil")
+   Nontonnya sambil rebahan.           (ends with "rebahan")
+   Kenangan indah masa kecil,          (ends with "kecil")
+   Tidak pernah terima tagihan."       (ends with "tagihan")
+
+10. "Tetangga baru namanya Rahmat,     (ends with "Rahmat")
+    Punya istri namanya Cua.           (ends with "Cua")
+    Kakek cerita terlalu semangat,    (ends with "semangat")
+    Gigi palsunya copot semua."        (ends with "semua")
+
+11. "Duduk santai membaca koran,       (ends with "koran")
+    Membacanya sambil makan petisan.   (ends with "petisan")
+    Seenak-enaknya makan di restoran, (ends with "restoran")
+    Lebih enak makan gratisan."        (ends with "gratisan")
+
+12. "Terbang tinggi si burung dara,    (ends with "dara")
+    Hinggap sebentar di pohon jati.    (ends with "jati")
+    Jangan biarkan hati terluka,       (ends with "terluka")
+    Meski cobaan datang silih berganti." (ends with "berganti")
+
+13. "Anak kucing bermain tali,         (ends with "tali")
+    Kera duduk membaca koran.          (ends with "koran")
+    Bagaimana hati tak geli,          (ends with "geli")
+    Kepala botak suka sisiran."        (ends with "sisiran")
+
+14. "Si Tono rambutnya jambul,         (ends with "jambul")
+    Suka diam di atas genteng.          (ends with "genteng")
+    Biar dikata kurang gaul,          (ends with "gaul")
+    Yang penting tetap ganteng."       (ends with "ganteng")
+
+15. "Hujan deras turun di musim hujan, (ends with "hujan")
+    Pagi ini terasa begitu sejuk.      (ends with "sejuk")
+    Kehidupan kota pun menjadi hujan,  (ends with "hujan")
+    Membuat aku merasa sedih sekuk."  (ends with "sekuk")
+
+LEARN FROM THESE EXAMPLES:
+- Each pantun has perfect a-b-a-b rhyme pattern
+- Natural, flowing Indonesian language
+- Meaningful, connected content
+- No made-up words or forced rhymes
+- Creative but grounded in real life
+- Proper pantun structure with sampiran and isi
 
 Remember:
 ✅ Simple, rhythmic, emotionally natural.  
